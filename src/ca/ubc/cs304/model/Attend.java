@@ -1,6 +1,6 @@
 package ca.ubc.cs304.model;
 
-public class Attends {
+public class Attend {
     private final int memberId;
     private final int eventId;
 
@@ -12,7 +12,7 @@ public class Attends {
         return eventId;
     }
 
-    public Attends(int memberId, int eventId) {
+    public Attend(int memberId, int eventId) {
         this.memberId = memberId;
         this.eventId = eventId;
     }

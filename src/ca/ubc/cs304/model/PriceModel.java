@@ -7,19 +7,29 @@ import java.sql.Date;
 public class PriceModel {
     private final int membershipFee;
     private final String membershipType;
-    private final java.sql.Date startDate;
-    private final java.sql.Date endDate;
-	
-	public PriceModel(int membershipFee, String membershipType) {
+    private final Date startDate;
+    private final Date endDate;
+
+    public PriceModel(int membershipFee, String membershipType, Date startDate, Date endDate) {
         this.membershipFee = membershipFee;
         this.membershipType = membershipType;
-        
-	}
-
-	public String getMemberShipFee() {
-        return membershipFee;
-        
-    public String getMembershipType() {
-        return membershipType
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
-    
+
+    public int getMembershipFee() {
+        return membershipFee;
+    }
+
+    public String getMembershipType() {
+        return membershipType;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+}
