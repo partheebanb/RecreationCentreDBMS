@@ -96,12 +96,7 @@ public class Bank implements LoginWindowDelegate, TerminalTransactionsDelegate {
     		} else {
     			System.out.printf("%-20.20s", model.getAddress());
     		}
-    		System.out.printf("%-15.15s", model.getCity());
-    		if (model.getPhoneNumber() == 0) {
-    			System.out.printf("%-15.15s", " ");
-    		} else {
-    			System.out.printf("%-15.15s", model.getPhoneNumber());
-    		}
+
     		
     		System.out.println();
     	}
