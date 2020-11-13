@@ -64,16 +64,11 @@ public class DatabaseConnectionHandler {
 	
 	public void insertBranch(BranchModel model) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO branch VALUES (?,?,?)");
 			ps.setInt(1, model.getId());
 			ps.setString(2, model.getName());
 			ps.setString(3, model.getAddress());
-			ps.setString(4, model.getCity());
-			if (model.getPhoneNumber() == 0) {
-				ps.setNull(5, java.sql.Types.INTEGER);
-			} else {
-				ps.setInt(5, model.getPhoneNumber());
-			}
+
 
 			ps.executeUpdate();
 			connection.commit();
@@ -104,11 +99,9 @@ public class DatabaseConnectionHandler {
 //    		}
 			
 			while(rs.next()) {
-				BranchModel model = new BranchModel(rs.getString("branch_addr"),
-													rs.getString("branch_city"),
-													rs.getInt("branch_id"),
+				BranchModel model = new BranchModel(rs.getInt("branch_id"),
 													rs.getString("branch_name"),
-													rs.getInt("branch_phone"));
+													rs.getString("branch_address"));
 				result.add(model);
 			}
 
@@ -167,21 +160,32 @@ public class DatabaseConnectionHandler {
 	}
 	
 	public void databaseSetup() {
+
+	}
+
+	private void restartTables() {
 		dropBranchTableIfExists();
-		
+
 		try {
 			Statement stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE branch (branch_id integer PRIMARY KEY, branch_name varchar2(20) not null, branch_addr varchar2(50), branch_city varchar2(20) not null, branch_phone integer)");
+			stmt.executeUpdate("CREATE TABLE Branch (" +
+					"branch_id integer not null PRIMARY KEY," +
+					"branch_name varchar2(50) not null," +
+					"branch_address varchar2(100) not null" +
+					")");
 			stmt.close();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
-		
-		BranchModel branch1 = new BranchModel("123 Charming Ave", "Vancouver", 1, "First Branch", 1234567);
+
+		BranchModel branch1 = new BranchModel(1, "Vincent's Branch", "Vin vin road");
 		insertBranch(branch1);
-		
-		BranchModel branch2 = new BranchModel("123 Coco Ave", "Vancouver", 2, "Second Branch", 1234568);
+
+		BranchModel branch2 = new BranchModel(2, "Partha's Branch", "Par par ave");
 		insertBranch(branch2);
+
+		BranchModel branch3 = new BranchModel(3, "Agnes's Branch", "Nes nes blvd");
+		insertBranch(branch3);
 	}
 	
 	private void dropBranchTableIfExists() {
@@ -191,7 +195,7 @@ public class DatabaseConnectionHandler {
 			
 			while(rs.next()) {
 				if(rs.getString(1).toLowerCase().equals("branch")) {
-					stmt.execute("DROP TABLE branch");
+					stmt.execute("DROP TABLE Branch");
 					break;
 				}
 			}

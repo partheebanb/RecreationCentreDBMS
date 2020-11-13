@@ -131,23 +131,7 @@ public class TerminalTransactions {
 			address = null;
 		}
 		
-		String city = null;
-		while (city == null || city.length() <= 0) {
-			System.out.print("Please enter the branch city you wish to insert: ");
-			city = readLine().trim();
-		}
-		
-		int phoneNumber = INVALID_INPUT;
-		while (phoneNumber == INVALID_INPUT) {
-			System.out.print("Please enter the branch phone number you wish to insert: ");
-			phoneNumber = readInteger(true);
-		}
-		
-		BranchModel model = new BranchModel(address,
-											city,
-											id,
-											name,
-											phoneNumber);
+		BranchModel model = new BranchModel(id, name, address);
 		delegate.insertBranch(model);
 	}
 	
