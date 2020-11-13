@@ -5,32 +5,32 @@ import java.sql.Date;
  * The intent for this class is to update/store information about a single program
  */
 public class ProgramModel {
-    private final int eventId;
-    private final String name;
-    private final java.sql.Date startDate;
-    private final java.sql.Date endDate;
-	
-	public ProgramModel(int eventId, String name, java.sql.Date startDate, java.sql.Date endDate) {
+	private final int eventId;
+	private final String name;
+	private final Date startDate;
+	private final Date endDate;
+
+	public ProgramModel(int eventId, String name, Date startDate, Date endDate) {
 		this.eventId = eventId;
-        this.name = name;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        
+		this.name = name;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
-	public String getEventId() {
-		return this.eventId;
+	public int getEventId() {
+		return eventId;
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
-    public String getStartDate() {
-		return this.startDate;
-    }
-
-    public String getEndDate() {
-		return this.endDate;
+	public Date getStartDate() {
+		return startDate;
 	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+}
     

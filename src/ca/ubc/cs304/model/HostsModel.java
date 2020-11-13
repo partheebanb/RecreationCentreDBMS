@@ -5,17 +5,18 @@ package ca.ubc.cs304.model;
  */
 public class HostsModel {
 	private final int employee_id;
-	private final int event_id
-	
+	private final int event_id;
+
 	public HostsModel(int employee_id, int event_id) {
 		this.employee_id = employee_id;
-		this.event_id = event_id
+		this.event_id = event_id;
 	}
 
-	public String getEmployeeId() {
+	public int getEmployeeId() {
 		return employee_id;
 	}
 
-	public String getEventId() {
+	public int getEventId() {
 		return event_id;
 	}
+}
