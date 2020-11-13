@@ -1,6 +1,7 @@
 package ca.ubc.cs304.model;
 
-public class Attend {
+public class AttendRelation {
+
     private final int memberId;
     private final int eventId;
 
@@ -12,7 +13,7 @@ public class Attend {
         return eventId;
     }
 
-    public Attend(int memberId, int eventId) {
+    public AttendRelation(int memberId, int eventId) {
         this.memberId = memberId;
         this.eventId = eventId;
     }

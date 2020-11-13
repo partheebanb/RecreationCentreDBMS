@@ -1,22 +1,25 @@
 package ca.ubc.cs304.model;
+import java.sql.Date;
 
 /**
  * The intent for this class is to update/store information about a single program
  */
-public class UsesModel {
+public class UseRelation {
 	private final int eventId;
 	private final int bookableId;
 
-	public UsesModel(int eventId, int bookableId) {
+	public UseRelation(int eventId, int bookableId) {
 		this.eventId = eventId;
 		this.bookableId = bookableId;
 	}
 
 	public int getEventId() {
-		return eventId;
+		return this.eventId;
 	}
 
 	public int getBookableId() {
-		return bookableId;
+		return this.bookableId;
 	}
 }
+
+
