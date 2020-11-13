@@ -167,21 +167,7 @@ public class DatabaseConnectionHandler {
 	}
 	
 	public void databaseSetup() {
-		dropBranchTableIfExists();
-		
-		try {
-			Statement stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE branch (branch_id integer PRIMARY KEY, branch_name varchar2(20) not null, branch_addr varchar2(50), branch_city varchar2(20) not null, branch_phone integer)");
-			stmt.close();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-		}
-		
-		BranchModel branch1 = new BranchModel("123 Charming Ave", "Vancouver", 1, "First Branch", 1234567);
-		insertBranch(branch1);
-		
-		BranchModel branch2 = new BranchModel("123 Coco Ave", "Vancouver", 2, "Second Branch", 1234568);
-		insertBranch(branch2);
+
 	}
 	
 	private void dropBranchTableIfExists() {
