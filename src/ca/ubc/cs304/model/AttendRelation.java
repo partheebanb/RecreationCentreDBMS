@@ -1,6 +1,7 @@
 package ca.ubc.cs304.model;
 
 public class AttendRelation {
+
     private final int memberId;
     private final int eventId;
 
