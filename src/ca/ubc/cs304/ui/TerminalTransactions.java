@@ -3,9 +3,14 @@ package ca.ubc.cs304.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Date;
+import java.util.Scanner;
 
+import ca.ubc.cs304.controller.Bank;
 import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
+import ca.ubc.cs304.model.BookableModel;
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.EquipmentModel;
 
 /**
  * The class is only responsible for handling terminal text inputs. 
@@ -17,7 +22,8 @@ public class TerminalTransactions {
 	private static final int EMPTY_INPUT = 0;
 	
 	private BufferedReader bufferedReader = null;
-	private TerminalTransactionsDelegate delegate = null;
+	private Bank delegate = null;
+//	private Bank bank = null;
 
 	public TerminalTransactions() {
 	}
@@ -26,7 +32,7 @@ public class TerminalTransactions {
 	 * Sets up the database to have a branch table with two tuples so we can insert/update/delete from it.
 	 * Refer to the databaseSetup.sql file to determine what tuples are going to be in the table.
 	 */
-	public void setupDatabase(TerminalTransactionsDelegate delegate) {
+	public void setupDatabase(Bank delegate) {
 		this.delegate = delegate;
 		
 		bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -56,7 +62,7 @@ public class TerminalTransactions {
 	/**
 	 * Displays simple text interface
 	 */ 
-	public void showMainMenu(TerminalTransactionsDelegate delegate) {
+	public void showMainMenu(Bank delegate) {
 		this.delegate = delegate;
 		
 	    bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -69,7 +75,8 @@ public class TerminalTransactions {
 			System.out.println("3. Update branch name");
 			System.out.println("4. Show branch");
 			System.out.println("5. Quit");
-			System.out.print("Please choose one of the above 5 options: ");
+			System.out.println("6. Insert Equipment");
+			System.out.print("Please choose one of the above 6 options: ");
 
 			choice = readInteger(false);
 
@@ -89,7 +96,10 @@ public class TerminalTransactions {
 				case 4:  
 					delegate.showBranch(); 
 					break;
-				case 5:
+				case 6:
+					testInsertEquipment();
+					break;
+		    	case 5:
 					handleQuitOption();
 					break;
 				default:
@@ -109,6 +119,38 @@ public class TerminalTransactions {
 				delegate.deleteBranch(branchId);
 			}
 		}
+	}
+
+	private void testInsertEquipment() {
+		int bookableId = INVALID_INPUT;
+		while (bookableId == INVALID_INPUT) {
+			System.out.print("Please enter the bookable ID you wish to insert: ");
+			bookableId = readInteger(false);
+		}
+
+		String type = null;
+		while (type == null || type.length() <= 0) {
+			System.out.print("Please enter the equipment type you wish to insert: ");
+			type = readLine().trim();
+		}
+
+		String name = null;
+		while (name == null || name.length() <= 0) {
+			System.out.print("Please enter the equipment name you wish to insert: ");
+			name = readLine().trim();
+		}
+
+		int branchId = INVALID_INPUT;
+		while (branchId == INVALID_INPUT) {
+			System.out.print("Please enter the branch ID you wish to insert: ");
+			branchId = readInteger(false);
+		}
+
+		Date purchased = new Date(20201120);
+		Date lastFixed = new Date(20201120);
+
+		BookableModel model = new EquipmentModel(bookableId, type, name, branchId, purchased, lastFixed);
+
 	}
 	
 	private void handleInsertOption() {

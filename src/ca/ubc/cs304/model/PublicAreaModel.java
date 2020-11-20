@@ -6,14 +6,12 @@ public class PublicAreaModel {
     private final String name;
     private final String type;
     private final boolean isOutdoor;
-    private final Date accessDate;
 
-    public PublicAreaModel(int areaId, String name, String type, boolean isOutdoor, Date accessDate) {
+    public PublicAreaModel(int areaId, String name, String type, boolean isOutdoor) {
         this.areaId = areaId;
         this.name = name;
         this.type = type;
         this.isOutdoor = isOutdoor;
-        this.accessDate = accessDate;
     }
 
     public int getAreaId() {
@@ -32,7 +30,4 @@ public class PublicAreaModel {
         return isOutdoor;
     }
 
-    public Date getAccessDate() {
-        return accessDate;
-    }
 }
