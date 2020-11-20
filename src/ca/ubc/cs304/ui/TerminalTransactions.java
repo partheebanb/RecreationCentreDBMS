@@ -94,7 +94,7 @@ public class TerminalTransactions {
 					handleUpdateOption();
 					break;
 				case 4:  
-					delegate.showBranch(); 
+					delegate.showBranch();
 					break;
 				case 6:
 					testInsertEquipment();
@@ -149,8 +149,8 @@ public class TerminalTransactions {
 		Date purchased = new Date(20201120);
 		Date lastFixed = new Date(20201120);
 
-		BookableModel model = new EquipmentModel(bookableId, type, name, branchId, purchased, lastFixed);
-
+		EquipmentModel model = new EquipmentModel(bookableId, type, name, branchId, purchased, lastFixed);
+		delegate.dbHandler.bookableHandler.insertEquipment(model);
 	}
 	
 	private void handleInsertOption() {

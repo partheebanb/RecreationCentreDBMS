@@ -43,7 +43,7 @@ public class BookableHandler {
     public void insertToEquipment(EquipmentModel model) {
         // for equipment table
         try {
-            PreparedStatement pse = connection.prepareStatement("INSERT INTO equipement VALUES (?,?,?)");
+            PreparedStatement pse = connection.prepareStatement("INSERT INTO equipment VALUES (?,?,?)");
             pse.setInt(1, model.getBookableId());
             pse.setDate(2, model.getPurchased());
             pse.setDate(3, model.getLastFixed());
