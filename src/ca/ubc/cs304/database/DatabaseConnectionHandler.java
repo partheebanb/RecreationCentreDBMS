@@ -25,6 +25,7 @@ public class DatabaseConnectionHandler {
 	public PublicAreaHandler publicAreaHandler = null;
 	public BookableHandler bookableHandler = null;
 	public MemberHandler memberHandler = null;
+	public AccessHandler accessHandler = null;
 	
 	public DatabaseConnectionHandler() {
 		try {
@@ -149,6 +150,7 @@ public class DatabaseConnectionHandler {
 			publicAreaHandler = new PublicAreaHandler(connection);
 			bookableHandler = new BookableHandler(connection);
 			memberHandler = new MemberHandler(connection);
+			accessHandler = new AccessHandler(connection);
 	
 			System.out.println("\nConnected to Oracle!");
 			return true;

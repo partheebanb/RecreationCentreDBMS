@@ -36,7 +36,7 @@ public class RecCenterDBMS implements LoginWindowDelegate, TerminalTransactionsD
 			// Once connected, remove login window and start text transaction flow
 			loginWindow.dispose();
 
-			showMainMenu();
+			MainWindow mainWindow = new MainWindow(this.dbHandler);
 		} else {
 			loginWindow.handleLoginFailed();
 
@@ -48,12 +48,11 @@ public class RecCenterDBMS implements LoginWindowDelegate, TerminalTransactionsD
 		}
 	}
 
-	public void showMainMenu() {
-		//TerminalTransactions transaction = new TerminalTransactions();
-		//transaction.setupDatabase(this);
-		//transaction.showMainMenu(this);
+	public void launchGUI(String username, String password) {
 
-		MainWindow mainWindow = new MainWindow(this.dbHandler);
+		if (dbHandler.login(username, password)) {
+			MainWindow mainWindow = new MainWindow(this.dbHandler);
+		}
 	}
 	
 	/**
@@ -139,8 +138,9 @@ public class RecCenterDBMS implements LoginWindowDelegate, TerminalTransactionsD
 	public static void main(String args[]) {
 		RecCenterDBMS recCenterDBMS = new RecCenterDBMS();
 		if (args.length == 2) {
-			recCenterDBMS.dbHandler.login(args[0], args[1]);
-			recCenterDBMS.showMainMenu();
+
+			recCenterDBMS.launchGUI(args[0], args[1]);
+
 		} else {
 			recCenterDBMS.start();
 		}

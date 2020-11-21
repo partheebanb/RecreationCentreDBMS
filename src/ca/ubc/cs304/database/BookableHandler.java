@@ -21,7 +21,7 @@ public class BookableHandler {
         insertToEquipment(model);
     }
 
-    public void insertToBookable(EquipmentModel model) {
+    private void insertToBookable(EquipmentModel model) {
         // for bookable table
         PreparedStatement psb = null;
         try {
@@ -39,7 +39,7 @@ public class BookableHandler {
         }
     }
 
-    public void insertToEquipment(EquipmentModel model) {
+    private void insertToEquipment(EquipmentModel model) {
         // for equipment table
         try {
             PreparedStatement pse = connection.prepareStatement("INSERT INTO equipment VALUES (?,?,?)");
@@ -54,6 +54,40 @@ public class BookableHandler {
             rollbackConnection();
         }
     }
+
+    // AGGREGATION with GROUP BY
+    public void avgBookableGroupedByEvents() {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT COUNT(BOOKABLE.BOOKABLE_ID), EVENT.EVENT_ID\n" +
+                            "FROM BOOKABLE, EVENT, USE\n" +
+                            "WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID\n" +
+                            "GROUP BY (EVENT.EVENT_ID)");
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    // nested aggregation
+    // count the number of bookables grouped by events
+    // return only the result with the earliest event date
+    public void countOfBookablesUsedInTheLatestEventDate() {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT COUNT(BOOKABLE.BOOKABLE_ID), EVENT.EVENT_DATETIME" +
+                            "FROM BOOKABLE, EVENT, USE" +
+                            "WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID" +
+                            "GROUP BY (EVENT.EVENT_DATETIME)" +
+                            "HAVING (EVENT_DATETIME) = (SELECT MAX(EVENT_DATETIME)" +
+                            "                            FROM EVENT)");
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+
 
     private void rollbackConnection() {
         try  {
