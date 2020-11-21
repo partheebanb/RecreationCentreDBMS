@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class BookableHandler {
-    private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
 
@@ -43,7 +42,7 @@ public class BookableHandler {
     public void insertToEquipment(EquipmentModel model) {
         // for equipment table
         try {
-            PreparedStatement pse = connection.prepareStatement("INSERT INTO equipement VALUES (?,?,?)");
+            PreparedStatement pse = connection.prepareStatement("INSERT INTO equipment VALUES (?,?,?)");
             pse.setInt(1, model.getBookableId());
             pse.setDate(2, model.getPurchased());
             pse.setDate(3, model.getLastFixed());

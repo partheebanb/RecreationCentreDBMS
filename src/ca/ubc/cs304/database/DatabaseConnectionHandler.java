@@ -9,8 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import ca.ubc.cs304.model.BranchModel;
-import ca.ubc.cs304.model.PublicAreaModel;
-import ca.ubc.cs304.model.BookableModel;
 
 /**
  * This class handles all database related transactions
@@ -26,14 +24,13 @@ public class DatabaseConnectionHandler {
 	private Connection connection = null;
 	public PublicAreaHandler publicAreaHandler = null;
 	public BookableHandler bookableHandler = null;
+	public MemberHandler memberHandler = null;
 	
 	public DatabaseConnectionHandler() {
 		try {
 			// Load the Oracle JDBC driver
 			// Note that the path could change for new drivers
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-			publicAreaHandler = new PublicAreaHandler(connection);
-			bookableHandler = new BookableHandler(connection);
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
@@ -151,6 +148,7 @@ public class DatabaseConnectionHandler {
 
 			publicAreaHandler = new PublicAreaHandler(connection);
 			bookableHandler = new BookableHandler(connection);
+			memberHandler = new MemberHandler(connection);
 	
 			System.out.println("\nConnected to Oracle!");
 			return true;

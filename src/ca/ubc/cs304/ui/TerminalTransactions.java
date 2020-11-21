@@ -91,7 +91,7 @@ public class TerminalTransactions {
 					handleUpdateOption();
 					break;
 				case 4:  
-					delegate.showBranch(); 
+					delegate.showBranch();
 					break;
 				case 6:
 					testInsertEquipment();

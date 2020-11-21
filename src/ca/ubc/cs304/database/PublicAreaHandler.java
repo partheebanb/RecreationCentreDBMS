@@ -6,14 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class PublicAreaHandler {
-    private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
 
     private Connection connection = null;
 
     public PublicAreaHandler(Connection connection) {
-        connection = this.connection;
+        this.connection = connection;
     }
 
     public void deletePublicArea(int areaId) {
