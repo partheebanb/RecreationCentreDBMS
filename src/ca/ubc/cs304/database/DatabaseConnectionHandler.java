@@ -205,6 +205,7 @@ public class DatabaseConnectionHandler {
 			while(rs.next()) {
 				if(rs.getString(1).toLowerCase().equals("branch")) {
 					stmt.execute("DROP TABLE Branch");
+					stmt.execute("DROP TABLE PublicArea");
 					break;
 				}
 			}
