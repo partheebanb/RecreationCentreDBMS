@@ -10,11 +10,11 @@ import ca.ubc.cs304.ui.TerminalTransactions;
 /**
  * This is the main controller class that will orchestrate everything.
  */
-public class Bank implements LoginWindowDelegate, TerminalTransactionsDelegate {
+public class RecCenterDBMS implements LoginWindowDelegate, TerminalTransactionsDelegate {
 	public DatabaseConnectionHandler dbHandler = null;
 	private LoginWindow loginWindow = null;
 
-	public Bank() {
+	public RecCenterDBMS() {
 		dbHandler = new DatabaseConnectionHandler();
 	}
 	
@@ -130,7 +130,14 @@ public class Bank implements LoginWindowDelegate, TerminalTransactionsDelegate {
 	 * Main method called at launch time
 	 */
 	public static void main(String args[]) {
-		Bank bank = new Bank();
-		bank.start();
+		RecCenterDBMS recCenterDBMS = new RecCenterDBMS();
+		if (args.length == 2) {
+			recCenterDBMS.dbHandler.login(args[0], args[1]);
+			TerminalTransactions transaction = new TerminalTransactions();
+			transaction.setupDatabase(recCenterDBMS);
+			transaction.showMainMenu(recCenterDBMS);
+		} else {
+			recCenterDBMS.start();
+		}
 	}
 }
