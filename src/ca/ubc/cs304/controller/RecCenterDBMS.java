@@ -5,6 +5,7 @@ import ca.ubc.cs304.delegates.LoginWindowDelegate;
 import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
 import ca.ubc.cs304.model.BranchModel;
 import ca.ubc.cs304.ui.LoginWindow;
+import ca.ubc.cs304.ui.MainWindow;
 import ca.ubc.cs304.ui.TerminalTransactions;
 
 /**
@@ -35,9 +36,7 @@ public class RecCenterDBMS implements LoginWindowDelegate, TerminalTransactionsD
 			// Once connected, remove login window and start text transaction flow
 			loginWindow.dispose();
 
-			TerminalTransactions transaction = new TerminalTransactions();
-			transaction.setupDatabase(this);
-			transaction.showMainMenu(this);
+			showMainMenu();
 		} else {
 			loginWindow.handleLoginFailed();
 
@@ -47,6 +46,14 @@ public class RecCenterDBMS implements LoginWindowDelegate, TerminalTransactionsD
 				System.exit(-1);
 			}
 		}
+	}
+
+	public void showMainMenu() {
+		//TerminalTransactions transaction = new TerminalTransactions();
+		//transaction.setupDatabase(this);
+		//transaction.showMainMenu(this);
+
+		MainWindow mainWindow = new MainWindow(this.dbHandler);
 	}
 	
 	/**
@@ -133,9 +140,7 @@ public class RecCenterDBMS implements LoginWindowDelegate, TerminalTransactionsD
 		RecCenterDBMS recCenterDBMS = new RecCenterDBMS();
 		if (args.length == 2) {
 			recCenterDBMS.dbHandler.login(args[0], args[1]);
-			TerminalTransactions transaction = new TerminalTransactions();
-			transaction.setupDatabase(recCenterDBMS);
-			transaction.showMainMenu(recCenterDBMS);
+			recCenterDBMS.showMainMenu();
 		} else {
 			recCenterDBMS.start();
 		}
