@@ -4,11 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Date;
-import java.util.Scanner;
 
-import ca.ubc.cs304.controller.Bank;
-import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
-import ca.ubc.cs304.model.BookableModel;
+import ca.ubc.cs304.controller.RecCenterDBMS;
 import ca.ubc.cs304.model.BranchModel;
 import ca.ubc.cs304.model.EquipmentModel;
 
@@ -22,7 +19,7 @@ public class TerminalTransactions {
 	private static final int EMPTY_INPUT = 0;
 	
 	private BufferedReader bufferedReader = null;
-	private Bank delegate = null;
+	private RecCenterDBMS delegate = null;
 //	private Bank bank = null;
 
 	public TerminalTransactions() {
@@ -32,7 +29,7 @@ public class TerminalTransactions {
 	 * Sets up the database to have a branch table with two tuples so we can insert/update/delete from it.
 	 * Refer to the databaseSetup.sql file to determine what tuples are going to be in the table.
 	 */
-	public void setupDatabase(Bank delegate) {
+	public void setupDatabase(RecCenterDBMS delegate) {
 		this.delegate = delegate;
 		
 		bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -62,7 +59,7 @@ public class TerminalTransactions {
 	/**
 	 * Displays simple text interface
 	 */ 
-	public void showMainMenu(Bank delegate) {
+	public void showMainMenu(RecCenterDBMS delegate) {
 		this.delegate = delegate;
 		
 	    bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -149,8 +146,8 @@ public class TerminalTransactions {
 		Date purchased = new Date(20201120);
 		Date lastFixed = new Date(20201120);
 
-		BookableModel model = new EquipmentModel(bookableId, type, name, branchId, purchased, lastFixed);
-
+		EquipmentModel model = new EquipmentModel(bookableId, type, name, branchId, purchased, lastFixed);
+		delegate.dbHandler.bookableHandler.insertEquipment(model);
 	}
 	
 	private void handleInsertOption() {
