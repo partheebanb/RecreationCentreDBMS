@@ -31,6 +31,7 @@ public class BookingForm implements DisposableWindow {
         frame.pack();
         frame.setVisible(true);
 
+        // Make screen size normal
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
@@ -47,6 +48,8 @@ public class BookingForm implements DisposableWindow {
         });
     }
 
+    // When enterForm is pressed, we submit the new booking in the SQL statement
+    // We also add any bookables that the user book into this booking
     public void setupEnterButton() {
         enterForm.addActionListener(new ActionListener() {
             @Override
@@ -56,12 +59,14 @@ public class BookingForm implements DisposableWindow {
         });
     }
 
+    // Let user input the date in a spinner
     public void setupDateSpinner() {
         JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(dateSpinner, "h:mm a, EEE, dd-MMM-yyyy");
         dateSpinner.setEditor(timeEditor);
         dateSpinner.setValue(new Date(new java.util.Date().getTime()));
     }
 
+    // Let user choose the member from a choice dialog
     public void setupMemberComboBox() {
         for (MemberModel memberModel: dbHandler.memberHandler.getMemberInfoInBranch(branchId)) {
             memberComboBox.addItem(memberModel);
@@ -72,6 +77,13 @@ public class BookingForm implements DisposableWindow {
         dateSpinner = new JSpinner(new SpinnerDateModel());
     }
 
+    /*
+     * THIS IS FOR UI PURPOSES ONLY THERE IS NO EXTRA FUNCTIONALITIES FOR THIS FEATURE AT ALL
+     *
+     * Disposable Window is a system implemented to keep the windows from being to cluttered
+     * It closes all the childrens whenever the parent window is clicked so there won't be too many
+     * windows running around
+     */
     private void closeAllChildren() {
         for (DisposableWindow disposableWindow : childrenPanel) {
             disposableWindow.close();
