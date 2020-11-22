@@ -25,4 +25,9 @@ public class BranchModel {
 	public String getAddress() {
 		return address;
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

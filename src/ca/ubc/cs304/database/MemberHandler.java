@@ -16,6 +16,72 @@ public class MemberHandler {
         this.connection = connection;
     }
 
+    public ArrayList<MemberModel> getMemberInfo() {
+        ArrayList<MemberModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM member");
+
+            while(rs.next()) {
+                MemberModel model = new MemberModel(rs.getInt("member_id"),
+                        rs.getDate("member_since"),
+                        rs.getDate("dob"),
+                        rs.getString("membership_type"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public ArrayList<MemberModel> getMemberInfoInBranch(int branch_id) {
+        ArrayList<MemberModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+                    "FROM MEMBER " +
+                    "WHERE MEMBER_ID IN (" +
+                    "    SELECT MEMBER_ID " +
+                    "    FROM SIGN_UP " +
+                    "    WHERE BRANCH_ID = ? " +
+                    "    )");
+
+            ps.setInt(1, branch_id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                MemberModel model = new MemberModel(rs.getInt("member_id"),
+                        rs.getDate("member_since"),
+                        rs.getDate("dob"),
+                        rs.getString("membership_type"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
     public void updateMemberEmail(int id, String email) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE member SET email = ? WHERE member_id = ?");
@@ -60,8 +126,7 @@ public class MemberHandler {
                         rs.getString("gender").charAt(0),
                         rs.getString("first_name"),
                         rs.getString("last_name"),
-                        rs.getString("email"),
-                        rs.getInt("membership_fee"));
+                        rs.getString("email"));
                 result.add(model);
             }
 

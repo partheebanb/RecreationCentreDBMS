@@ -15,6 +15,10 @@ public class BranchHandler {
         this.connection = connection;
     }
 
+    public void getAllBranch() {
+
+    }
+
     public void deleteBranch(int branchId) {
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
@@ -52,7 +56,7 @@ public class BranchHandler {
         }
     }
 
-    public BranchModel[] getBranchInfo() {
+    public ArrayList<BranchModel> getBranchInfo() {
         ArrayList<BranchModel> result = new ArrayList<BranchModel>();
 
         try {
@@ -72,7 +76,7 @@ public class BranchHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
-        return result.toArray(new BranchModel[result.size()]);
+        return result;
     }
 
     public void updateBranch(int id, String name) {

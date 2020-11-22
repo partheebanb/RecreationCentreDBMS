@@ -11,9 +11,8 @@ public class MemberModel {
     private final String firstName;
     private final String lastName;
     private final String email;
-    private final int membershipFee;
 
-    public MemberModel(int id, Date registrationDate, Date dateOfBirth, String membershipType, char gender, String firstName, String lastName, String email, int membershipFee) {
+    public MemberModel(int id, Date registrationDate, Date dateOfBirth, String membershipType, char gender, String firstName, String lastName, String email) {
         this.id = id;
         this.registrationDate = registrationDate;
         this.dateOfBirth = dateOfBirth;
@@ -22,7 +21,6 @@ public class MemberModel {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.membershipFee = membershipFee;
     }
 
     public int getId() {
@@ -57,7 +55,8 @@ public class MemberModel {
         return email;
     }
 
-    public int getMembershipFee() {
-        return membershipFee;
+    @Override
+    public String toString() {
+        return getFirstName() + " " + getLastName();
     }
 }
