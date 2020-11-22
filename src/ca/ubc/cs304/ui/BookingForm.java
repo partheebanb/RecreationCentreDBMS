@@ -5,18 +5,21 @@ import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.Date;
+import java.util.ArrayList;
 
-public class BookingForm {
+public class BookingForm implements DisposableWindow {
     private JButton enterForm;
     private JComboBox memberComboBox;
-    private JPanel jpanel;
+    public JPanel jpanel;
     private JSpinner dateSpinner;
     private JList bookableList;
+    private JButton addBookable;
     private int branchId;
     private final DatabaseConnectionHandler dbHandler;
+
+    private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
 
     BookingForm(DatabaseConnectionHandler dbHandler, int branchId) {
         this.dbHandler = dbHandler;
@@ -31,10 +34,17 @@ public class BookingForm {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
-
         setupDateSpinner();
         setupEnterButton();
         setupMemberComboBox();
+
+        // We don't want the windows to be too cluttered. So if we press the main window, we also kill all the children windows
+        jpanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                closeAllChildren();
+            }
+        });
     }
 
     public void setupEnterButton() {
@@ -60,5 +70,16 @@ public class BookingForm {
 
     private void createUIComponents() {
         dateSpinner = new JSpinner(new SpinnerDateModel());
+    }
+
+    private void closeAllChildren() {
+        for (DisposableWindow disposableWindow : childrenPanel) {
+            disposableWindow.close();
+        }
+    }
+
+    public void close() {
+        closeAllChildren();
+        SwingUtilities.getWindowAncestor(jpanel).dispose();
     }
 }

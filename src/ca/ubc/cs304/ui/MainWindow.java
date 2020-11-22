@@ -6,14 +6,16 @@ import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 public class MainWindow {
     private JPanel mainPanel;
     private JButton addBooking;
     private JComboBox branchComboBox;
     private DatabaseConnectionHandler dbHandler;
+
+    private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
 
     public MainWindow(DatabaseConnectionHandler dbHandler) {
         this.dbHandler = dbHandler;
@@ -34,7 +36,15 @@ public class MainWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 BranchModel selectedBranch = (BranchModel) branchComboBox.getSelectedItem();
-                new BookingForm(dbHandler, selectedBranch.getId());
+                childrenPanel.add(new BookingForm(dbHandler, selectedBranch.getId()));
+            }
+        });
+
+        // We don't want the windows to be too cluttered. So if we press the main window, we also kill all the children windows
+        mainPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                closeAllChildren();
             }
         });
     }
@@ -42,6 +52,12 @@ public class MainWindow {
     private void setupBranchComboBox() {
         for (BranchModel branchModel : dbHandler.branchHandler.getBranchInfo()) {
             branchComboBox.addItem(branchModel);
+        }
+    }
+
+    private void closeAllChildren() {
+        for(DisposableWindow disposableWindow : childrenPanel) {
+            disposableWindow.close();
         }
     }
 }
