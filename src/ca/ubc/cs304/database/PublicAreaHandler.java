@@ -55,21 +55,43 @@ public class PublicAreaHandler {
         }
     }
 
-    public ArrayList<PublicAreaModel> getAreaInfo() {
-        ArrayList<PublicAreaModel> result = new ArrayList<>();
+    public int getNextId() {
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT MAX(area_id) " +
+                    "FROM public_area");
+
+            ResultSet maxAreaId = ps.executeQuery();
+            if (maxAreaId.next()) {
+                return maxAreaId.getInt("MAX(AREA_ID)") + 1;
+            }
+
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return -1;
+    }
+
+    public ArrayList<String> getAreaInBranchString(int branch_id) {
+        ArrayList<String> result = new ArrayList<>();
 
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM public_area");
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT AREA_NAME, IS_OUTDOOR " +
+                        "FROM PUBLIC_AREA p " +
+                        "WHERE p.BRANCH_ID = ?");
+
+            ps.setInt(1, branch_id);
+
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                PublicAreaModel model = new PublicAreaModel(
-                        rs.getInt("areaId"),
-                        rs.getString("name"),
-                        rs.getString("type"),
-                        rs.getBoolean("isOutdoor"),
-                        rs.getInt("branchId"));
-                result.add(model);
+                result.add(rs.getString("area_name") + " " +
+                        rs.getString("is_outdoor"));
             }
 
             rs.close();
