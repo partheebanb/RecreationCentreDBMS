@@ -1,6 +1,5 @@
 package ca.ubc.cs304.model;
 import java.sql.Date;
-import java.sql.Date;
 import java.sql.Time;
 
 /**
@@ -11,12 +10,14 @@ public class DayEventModel {
 	private final String name;
 	private final java.sql.Date date;
 	private final java.sql.Time time;
+	private final int branch_id;
 
-	public DayEventModel(int eventId, String name, Date date, Time time) {
+	public DayEventModel(int eventId, String name, Date date, Time time, int branch_id) {
 		this.eventId = eventId;
 		this.name = name;
 		this.date = date;
 		this.time = time;
+		this.branch_id = branch_id;
 	}
 
 	public int getEventId() {
@@ -33,6 +34,10 @@ public class DayEventModel {
 
 	public Time getTime() {
 		return time;
+	}
+
+	public int getBranch_id() {
+		return branch_id;
 	}
 }
     

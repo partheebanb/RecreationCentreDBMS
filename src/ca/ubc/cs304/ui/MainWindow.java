@@ -2,8 +2,10 @@ package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.DayEventModel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -17,12 +19,16 @@ public class MainWindow {
     private JButton viewMembersButton;
     private JButton addAccessButton;
     private JButton viewComplexButton;
+    private JButton addAnEventButton;
+    private JTable eventsTable;
     private DatabaseConnectionHandler dbHandler;
 
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
 
     private DefaultListModel<String> bookingListModel;
     private DefaultListModel<String> accessListModel;
+
+    private DefaultTableModel eventsTableModel = new DefaultTableModel();
 
     public MainWindow(DatabaseConnectionHandler dbHandler) {
         this.dbHandler = dbHandler;
@@ -44,6 +50,13 @@ public class MainWindow {
         // Setup all the list views
         accessList.setModel(accessListModel);
         bookingList.setModel(bookingListModel);
+        eventsTable.setModel(eventsTableModel);
+
+        eventsTableModel.addColumn("Event Name");
+        eventsTableModel.addColumn("Event Date");
+        eventsTableModel.addColumn("Event Time");
+        eventsTableModel.addColumn("Event's Hosts");
+        eventsTableModel.addColumn("Event's Attendee");
 
         refreshLists();
 
@@ -87,6 +100,16 @@ public class MainWindow {
             bookingListModel.addElement(booking);
         }
 
+        for (DayEventModel event : dbHandler.eventHandler.getEventModelOnBranch(getSelectedBranchId())) {
+            ArrayList<String> s = new ArrayList<>();
+            s.add(event.getName());
+            s.add(event.getDate().toString());
+            s.add(event.getTime().toString());
+            s.add(dbHandler.eventHandler.getEmployeeManagingEventString(event.getEventId()));
+            s.add(dbHandler.eventHandler.getMemberAttendingEvent(event.getEventId()));
+
+            eventsTableModel.addRow(s.toArray());
+        }
     }
 
     // Let the user choose which branch it want to operate on
