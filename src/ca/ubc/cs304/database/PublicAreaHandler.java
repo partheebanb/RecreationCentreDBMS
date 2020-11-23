@@ -1,6 +1,7 @@
 package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.AccessRelation;
+import ca.ubc.cs304.model.BookableModel;
 import ca.ubc.cs304.model.PublicAreaModel;
 
 import java.sql.*;
@@ -14,6 +15,36 @@ public class PublicAreaHandler {
 
     public PublicAreaHandler(Connection connection) {
         this.connection = connection;
+    }
+
+    public ArrayList<PublicAreaModel> getPublicAreaInfoInBranch(int branch_id) {
+        ArrayList<PublicAreaModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+                    "FROM PUBLIC_AREA " +
+                    "WHERE BRANCH_ID = ?");
+
+            ps.setInt(1, branch_id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                PublicAreaModel model = new PublicAreaModel(rs.getInt("area_id"),
+                        rs.getString("area_name"),
+                        rs.getBoolean("area_is_outdoor"),
+                        rs.getInt("branch_id"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
     }
 
     public void deletePublicArea(int areaId) {
@@ -39,10 +70,9 @@ public class PublicAreaHandler {
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO public_area VALUES (?,?,?,?,?)");
             ps.setInt(1, model.getAreaId());
-            ps.setString(2, model.getType());
-            ps.setString(3, model.getName());
-            ps.setBoolean(4, model.isOutdoor());
-            ps.setInt(5, model.getBranchId());
+            ps.setString(2, model.getName());
+            ps.setBoolean(3, model.isOutdoor());
+            ps.setInt(4, model.getBranchId());
 
 
             ps.executeUpdate();

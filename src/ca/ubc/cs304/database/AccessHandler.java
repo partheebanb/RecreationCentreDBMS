@@ -60,6 +60,25 @@ public class AccessHandler {
         return result;
     }
 
+    public void insertAccess(AccessRelation accessRelation) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO \"ACCESS\"  (MEMBER_ID, AREA_ID, ACCESS_DATE) " +
+                    "VALUES (?,?,?)");
+            ps.setInt(1, accessRelation.getMemberId());
+            ps.setInt(2, accessRelation.getMemberId());
+            ps.setDate(3, accessRelation.getDate());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
     private void rollbackConnection() {
         try  {
             connection.rollback();
