@@ -21,6 +21,7 @@ public class MemberWindow implements DisposableWindow {
     private JButton modifyButton;
     private JPanel jpanel;
     private JComboBox memberComboBox;
+    private JButton deleteUser;
 
     private DatabaseConnectionHandler dbHandler;
 
@@ -52,9 +53,22 @@ public class MemberWindow implements DisposableWindow {
 
         setupMemberComboBox();
         setupEmailButtons();
+        setupDeleteUserButton();
 
         refreshList();
         refreshMemberData();
+    }
+
+    private void setupDeleteUserButton() {
+        deleteUser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int reply = JOptionPane.showConfirmDialog(null, "Confirm deleting member " + memberComboBox.getSelectedItem().toString(), "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                if (reply == JOptionPane.YES_OPTION) {
+                    // TODO: DELETE USER HERE
+                }
+            }
+        });
     }
 
     private void setupEmailButtons() {
