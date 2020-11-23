@@ -17,6 +17,7 @@ public class MainWindow {
     private JComboBox branchComboBox;
     private JList bookingList;
     private JList accessList;
+    private JButton viewMembersButton;
     private DatabaseConnectionHandler dbHandler;
 
     private HashMap<Integer, String> memberIdToName;
@@ -48,6 +49,13 @@ public class MainWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 childrenPanel.add(new BookingForm(dbHandler, getSelectedBranchId()));
+            }
+        });
+
+        viewMembersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                childrenPanel.add(new MemberWindow(dbHandler));
             }
         });
 
