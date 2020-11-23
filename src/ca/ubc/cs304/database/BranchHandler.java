@@ -75,6 +75,31 @@ public class BranchHandler {
         return result;
     }
 
+    public ArrayList<String> getBranchNamesByMemberId(int memberId) {
+        ArrayList<String> result = new ArrayList<String>();
+
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+                    "FROM branch b, sign_up s " +
+                    "WHERE s.MEMBER_ID = ? AND " +
+                            "b.BRANCH_ID = s.BRANCH_ID");
+
+            ps.setInt(1, memberId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                result.add(rs.getString("branch_name"));
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
     public void updateBranch(int id, String name) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE branch SET branch_name = ? WHERE branch_id = ?");

@@ -81,6 +81,33 @@ public class MemberHandler {
         return result;
     }
 
+    public String getMembershipPriceByType(String type) {
+
+        String returnString = null;
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement("SELECT MEMBERSHIP_FEE " +
+                    "FROM PRICE " +
+                    "WHERE MEMBERSHIP_TYPE = ?");
+
+            ps.setString(1, type);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                returnString = "$" + String.format("%.2f", (double) rs.getInt("membership_fee") / 100);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return returnString;
+    }
+
     public void updateMemberEmail(int id, String email) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE member SET email = ? WHERE member_id = ?");
