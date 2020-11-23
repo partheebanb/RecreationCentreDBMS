@@ -139,19 +139,27 @@ public class BookableHandler {
     // nested aggregation
     // count the number of bookables grouped by events
     // return only the result with the earliest event date
-    public void countOfBookablesUsedInTheLatestEventDate() {
+    public int countOfBookablesUsedInTheLatestEventDate() {
         try {
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT COUNT(BOOKABLE.BOOKABLE_ID), EVENT.EVENT_DATETIME" +
-                            "FROM BOOKABLE, EVENT, USE" +
-                            "WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID" +
+                    "SELECT COUNT(BOOKABLE.BOOKABLE_ID) " +
+                            "FROM BOOKABLE, EVENT, USE " +
+                            "WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID " +
                             "GROUP BY (EVENT.EVENT_DATETIME)" +
-                            "HAVING (EVENT_DATETIME) = (SELECT MAX(EVENT_DATETIME)" +
+                            "HAVING (EVENT_DATETIME) = (SELECT MAX(EVENT_DATETIME) " +
                             "                            FROM EVENT)");
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                return rs.getInt("count(bookable.bookable_id)");
+            }
+
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+        return -1;
     }
 
 

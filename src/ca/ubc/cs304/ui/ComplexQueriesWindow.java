@@ -18,6 +18,7 @@ public class ComplexQueriesWindow implements DisposableWindow {
     private JTable accessAggregateTable;
     private JTextField accessAggregateMinCount;
     private JButton accessAggregateRefreshButton;
+    private JLabel ReservationInLastEvent;
     private DatabaseConnectionHandler dbHandler;
 
     private DefaultTableModel accessAggregateTableModel = new DefaultTableModel();
@@ -34,6 +35,8 @@ public class ComplexQueriesWindow implements DisposableWindow {
         // Make screen size normal
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
+
+        ReservationInLastEvent.setText(dbHandler.bookableHandler.countOfBookablesUsedInTheLatestEventDate() + " Bookable's Reservation");
 
         setupAccessAggregateTable();
     }
