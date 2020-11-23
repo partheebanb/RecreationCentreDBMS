@@ -1,6 +1,7 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
+import ca.ubc.cs304.model.BranchModel;
 import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
@@ -71,7 +72,21 @@ public class MemberWindow implements DisposableWindow {
     }
 
     private void refreshList() {
-        //TODO:
+        accessListModel.removeAllElements();
+        for (String access : dbHandler.accessHandler.getAccessByMemberId(getSelectedMemberID())) {
+            accessListModel.addElement(access);
+        }
+
+        bookingListModel.removeAllElements();
+        for (String booking : dbHandler.bookingHandler.getBookingByMemberId(getSelectedMemberID())) {
+            bookingListModel.addElement(booking);
+        }
+
+        programListModel.removeAllElements();
+        for (String program : dbHandler.programHandler.getProgramByMemberID(getSelectedMemberID())) {
+            programListModel.addElement(program);
+        }
+
     }
 
     private void setupMemberComboBox() {
@@ -100,5 +115,10 @@ public class MemberWindow implements DisposableWindow {
 
     public void close() {
         SwingUtilities.getWindowAncestor(jpanel).dispose();
+    }
+
+    public int getSelectedMemberID() {
+        MemberModel selectedMember = (MemberModel) memberComboBox.getSelectedItem();
+        return selectedMember.getId();
     }
 }

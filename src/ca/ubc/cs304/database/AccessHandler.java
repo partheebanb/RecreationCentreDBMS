@@ -64,6 +64,36 @@ public class AccessHandler {
         return result;
     }
 
+    public ArrayList<String> getAccessByMemberId(int mid) {
+        ArrayList<String> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT m.FIRST_NAME, p.AREA_NAME " +
+                            "FROM ACCESS a, MEMBER m, PUBLIC_AREA p " +
+                            "WHERE a.MEMBER_ID = m.MEMBER_ID " +
+                            "  AND a.MEMBER_ID = ? " +
+                            ")");
+
+            ps.setInt(1, mid);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                result.add(rs.getString("first_name") + " " +
+                        rs.getString("area_name"));
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
     private void rollbackConnection() {
         try  {
             connection.rollback();
