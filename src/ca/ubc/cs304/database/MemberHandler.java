@@ -23,7 +23,7 @@ public class MemberHandler {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM member");
 
-            while(rs.next()) {
+            while (rs.next()) {
                 MemberModel model = new MemberModel(rs.getInt("member_id"),
                         rs.getDate("member_since"),
                         rs.getDate("dob"),
@@ -61,7 +61,7 @@ public class MemberHandler {
 
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 MemberModel model = new MemberModel(rs.getInt("member_id"),
                         rs.getDate("member_since"),
                         rs.getDate("dob"),
@@ -103,31 +103,33 @@ public class MemberHandler {
     }
 
     private void rollbackConnection() {
-        try  {
+        try {
             connection.rollback();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
     }
 
-//    division
-    public MemberModel[] membersInAllBranches() {
-        ArrayList<MemberModel> result = new ArrayList<>();
+    //    division
+    public ArrayList<String> membersInAllBranches() {
+        ArrayList<String> result = new ArrayList<>();
 
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name FROM member m WHERE NOT EXISTS (SELECT b.branch_id FROM branch b WHERE NOT EXISTS ( SELECT r.branch_id FROM registersIN r WHERE r.branch_id = b.branch_id AND m.member_id = r.member_id");
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT FIRST_NAME " +
+                            "FROM member m " +
+                            "WHERE NOT EXISTS " +
+                            "(SELECT b.branch_id " +
+                            "FROM branch b " +
+                            "WHERE NOT EXISTS " +
+                            "( SELECT r.branch_id " +
+                            "FROM SIGN_UP r " +
+                            "       WHERE r.branch_id = b.branch_id AND m.member_id = r.member_id))");
 
-            while(rs.next()) {
-                MemberModel model = new MemberModel(rs.getInt("member_id"),
-                        rs.getDate("member_since"),
-                        rs.getDate("dob"),
-                        rs.getString("membership_type"),
-                        rs.getString("gender").charAt(0),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("email"));
-                result.add(model);
+            while (rs.next()) {
+                String fn = rs.getString("first_name");
+                result.add(fn);
             }
 
             rs.close();
@@ -136,7 +138,40 @@ public class MemberHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
-        return result.toArray(new MemberModel[result.size()]);
+        return result;
+    }
+
+    public ArrayList<MemberModel> selectMembersInProgram(int pid) {
+
+        ArrayList<MemberModel> result = new ArrayList<>();
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
+                            "FROM MEMBER m, ATTEND a " +
+                            "WHERE m.MEMBER_ID = a.MEMBER_ID and a.EVENT_ID = ?");
+
+            ps.setInt(1, pid);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                MemberModel model = new MemberModel(
+                        rs.getInt("member_id"),
+                        rs.getDate("member_since"),
+                        rs.getDate("dob"),
+                        rs.getString("membership_type"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"));
+
+                result.add(model);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
 
