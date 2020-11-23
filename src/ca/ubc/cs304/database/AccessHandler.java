@@ -30,26 +30,6 @@ public class AccessHandler {
         }
     }
 
-    public int getNextId() {
-        try {
-            PreparedStatement ps = connection.prepareStatement("SELECT MAX(access_id) " +
-                    "FROM access");
-
-            ResultSet maxAccessId = ps.executeQuery();
-            if (maxAccessId.next()) {
-                return maxAccessId.getInt("MAX(AREA_ID)") + 1;
-            }
-
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-        return -1;
-    }
-
     public ArrayList<String> getAccessInBranchString(int branch_id) {
         ArrayList<String> result = new ArrayList<>();
 
