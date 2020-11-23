@@ -91,6 +91,7 @@ public class MainWindow {
     public void refreshLists() {
         accessListModel.removeAllElements();
         bookingListModel.removeAllElements();
+        removeAllElements(eventsTableModel);
 
         for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedBranchId())) {
             accessListModel.addElement(access);
@@ -129,6 +130,11 @@ public class MainWindow {
     public int getSelectedBranchId() {
         BranchModel selectedBranch = (BranchModel) branchComboBox.getSelectedItem();
         return selectedBranch.getId();
+    }
+
+    private void removeAllElements(DefaultTableModel tableModel) {
+        while (tableModel.getRowCount() != 0)
+            tableModel.removeRow(0);
     }
 
     /*
