@@ -60,7 +60,7 @@ public class MemberWindow implements DisposableWindow {
             public void actionPerformed(ActionEvent e) {
                 dbHandler.memberHandler.updateMemberEmail(
                         ((MemberModel) memberComboBox.getSelectedItem()).getId(),
-                        memberEmail.getSelectedText());
+                        memberEmail.getText());
             }
         });
     }
