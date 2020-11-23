@@ -1,10 +1,11 @@
 package ca.ubc.cs304.database;
 
+import ca.ubc.cs304.model.BookableModel;
+import ca.ubc.cs304.model.BranchModel;
 import ca.ubc.cs304.model.EquipmentModel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class BookableHandler {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
@@ -14,6 +15,72 @@ public class BookableHandler {
 
     public BookableHandler(Connection connection) {
         this.connection = connection;
+    }
+
+    public ArrayList<BookableModel> getEquipmentInfoInBranch(int branch_id) {
+        ArrayList<BookableModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+                    "FROM BOOKABLE " +
+                    "WHERE BOOKABLE_ID IN ( " +
+                    "    SELECT BOOKABLE_ID " +
+                    "    FROM EQUIPMENT " +
+                    "    ) AND BRANCH_ID = ?");
+
+            ps.setInt(1, branch_id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                BookableModel model = new BookableModel(rs.getInt("bookable_id"),
+                        rs.getString("bookable_type"),
+                        rs.getString("bookable_name"),
+                        rs.getInt("branch_id"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public ArrayList<BookableModel> getRoomInfoInBranch(int branch_id) {
+        ArrayList<BookableModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+                    "FROM BOOKABLE " +
+                    "WHERE BOOKABLE_ID IN ( " +
+                    "    SELECT BOOKABLE_ID " +
+                    "    FROM ROOM " +
+                    "    ) AND BRANCH_ID = ?");
+
+            ps.setInt(1, branch_id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                BookableModel model = new BookableModel(rs.getInt("bookable_id"),
+                        rs.getString("bookable_type"),
+                        rs.getString("bookable_type"),
+                        rs.getInt("branch_id"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
     }
 
     public void insertEquipment(EquipmentModel model) {
@@ -59,9 +126,9 @@ public class BookableHandler {
     public void avgBookableGroupedByEvents() {
         try {
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT COUNT(BOOKABLE.BOOKABLE_ID), EVENT.EVENT_ID\n" +
-                            "FROM BOOKABLE, EVENT, USE\n" +
-                            "WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID\n" +
+                    "SELECT COUNT(BOOKABLE.BOOKABLE_ID), EVENT.EVENT_ID " +
+                            "FROM BOOKABLE, EVENT, USE " +
+                            "WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID " +
                             "GROUP BY (EVENT.EVENT_ID)");
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());

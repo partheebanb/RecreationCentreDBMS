@@ -1,6 +1,7 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
+import ca.ubc.cs304.model.BookableModel;
 import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
@@ -14,12 +15,16 @@ public class BookingForm implements DisposableWindow {
     private JComboBox memberComboBox;
     public JPanel jpanel;
     private JSpinner dateSpinner;
-    private JList bookableList;
+    private JComboBox equipOrRoom;
+    private JComboBox bookableChoice;
     private JButton addBookable;
     private int branchId;
     private final DatabaseConnectionHandler dbHandler;
 
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
+
+    private DefaultListModel<BookableModel> model;
+    private JList bookableList;
 
     BookingForm(DatabaseConnectionHandler dbHandler, int branchId) {
         this.dbHandler = dbHandler;
@@ -27,7 +32,7 @@ public class BookingForm implements DisposableWindow {
 
         JFrame frame = new JFrame("Booking Form");
         frame.setContentPane(this.jpanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
@@ -38,6 +43,8 @@ public class BookingForm implements DisposableWindow {
         setupDateSpinner();
         setupEnterButton();
         setupMemberComboBox();
+
+        setupAddingBookable();
 
         // We don't want the windows to be too cluttered. So if we press the main window, we also kill all the children windows
         jpanel.addMouseListener(new MouseAdapter() {
@@ -50,7 +57,7 @@ public class BookingForm implements DisposableWindow {
 
     // When enterForm is pressed, we submit the new booking in the SQL statement
     // We also add any bookables that the user book into this booking
-    public void setupEnterButton() {
+    private void setupEnterButton() {
         enterForm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -60,21 +67,60 @@ public class BookingForm implements DisposableWindow {
     }
 
     // Let user input the date in a spinner
-    public void setupDateSpinner() {
+    private void setupDateSpinner() {
         JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(dateSpinner, "h:mm a, EEE, dd-MMM-yyyy");
         dateSpinner.setEditor(timeEditor);
         dateSpinner.setValue(new Date(new java.util.Date().getTime()));
     }
 
     // Let user choose the member from a choice dialog
-    public void setupMemberComboBox() {
+    private void setupMemberComboBox() {
         for (MemberModel memberModel: dbHandler.memberHandler.getMemberInfoInBranch(branchId)) {
             memberComboBox.addItem(memberModel);
         }
     }
 
+    // Let user add a bookable to this booking
+    private void setupAddingBookable() {
+        equipOrRoom.addItem("Equipment");
+        equipOrRoom.addItem("Room");
+
+        equipOrRoom.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshBookableList();
+            }
+        });
+        refreshBookableList();
+
+        addBookable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.addElement((BookableModel) bookableChoice.getSelectedItem());
+                refreshBookableList();
+            }
+        });
+    }
+
+    private void refreshBookableList() {
+        bookableChoice.removeAllItems();
+        if (equipOrRoom.getSelectedIndex() == 0) {
+            for (BookableModel bookableModel : dbHandler.bookableHandler.getEquipmentInfoInBranch(branchId)) {
+                if (!model.contains(bookableModel))
+                    bookableChoice.addItem(bookableModel);
+            }
+        } else {
+            for (BookableModel bookableModel : dbHandler.bookableHandler.getRoomInfoInBranch(branchId)) {
+                if (!model.contains(bookableModel))
+                    bookableChoice.addItem(bookableModel);
+            }
+        }
+    }
+
     private void createUIComponents() {
         dateSpinner = new JSpinner(new SpinnerDateModel());
+        model = new DefaultListModel<>();
+        bookableList = new JList(model);
     }
 
     /*

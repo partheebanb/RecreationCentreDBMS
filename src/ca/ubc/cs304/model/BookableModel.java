@@ -1,5 +1,7 @@
 package ca.ubc.cs304.model;
 
+import java.awt.print.Book;
+
 public class BookableModel {
     private final int bookableId;
     private final String type;
@@ -27,5 +29,18 @@ public class BookableModel {
 
     public int getBranchId() {
         return branchId;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " " + getBookableId();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BookableModel) {
+            return ((BookableModel) obj).getBookableId() == this.getBookableId();
+        }
+        return false;
     }
 }
