@@ -1,15 +1,12 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
-import ca.ubc.cs304.model.AccessRelation;
 import ca.ubc.cs304.model.BranchModel;
-import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MainWindow {
     private JPanel mainPanel;
@@ -18,6 +15,7 @@ public class MainWindow {
     private JList bookingList;
     private JList accessList;
     private JButton viewMembersButton;
+    private JButton addAccessButton;
     private DatabaseConnectionHandler dbHandler;
 
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
@@ -57,6 +55,13 @@ public class MainWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 childrenPanel.add(new MemberWindow(dbHandler));
+            }
+        });
+
+        addAccessButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                childrenPanel.add(new AccessForm(dbHandler, getSelectedBranchId()));
             }
         });
 
