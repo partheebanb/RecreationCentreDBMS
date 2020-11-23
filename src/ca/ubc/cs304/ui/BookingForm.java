@@ -67,7 +67,8 @@ public class BookingForm implements DisposableWindow {
                 int bookingNumber = dbHandler.bookingHandler.getNextId();
                 BookingModel bookingModel = new BookingModel(bookingNumber,
                         DateUtils.normalize((java.util.Date) dateSpinner.getValue()),
-                        ((MemberModel) memberComboBox.getSelectedItem()).getId());
+                        ((MemberModel) memberComboBox.getSelectedItem()).getId(),
+                        branchId);
 
                 dbHandler.bookingHandler.insertBooking(bookingModel);
 
