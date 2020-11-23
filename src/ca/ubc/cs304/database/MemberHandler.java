@@ -169,7 +169,40 @@ public class MemberHandler {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result;
+    }
+
+    public MemberModel selectMemberWithId(int mid) {
+
+        MemberModel result = null;
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
+                            "FROM MEMBER m" +
+                            "WHERE m.MEMBER_ID = ?");
+
+            ps.setInt(1, mid);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                MemberModel model = new MemberModel(
+                        rs.getInt("member_id"),
+                        rs.getDate("member_since"),
+                        rs.getDate("dob"),
+                        rs.getString("membership_type"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"));
+
+                result = model;
+            }
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
         return result;
     }

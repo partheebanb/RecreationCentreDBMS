@@ -1,9 +1,11 @@
 package ca.ubc.cs304.database;
 
+import ca.ubc.cs304.model.AccessRelation;
 import ca.ubc.cs304.model.PublicAreaModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class PublicAreaHandler {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
