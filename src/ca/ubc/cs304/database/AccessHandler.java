@@ -1,9 +1,12 @@
 package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.AccessRelation;
+import ca.ubc.cs304.model.MemberModel;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AccessHandler {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
@@ -17,17 +20,39 @@ public class AccessHandler {
 
     // AGGREGATION with GROUP BY, HAVING
     // Find users that have accessed public areas before and their # of accesses
-    public void avgAccessGroupedByDateHaving() {
+    public Map<MemberModel, Integer> avgAccessGroupedByDateHaving(int leastAccess) {
+        Map<MemberModel, Integer> resultMap = new HashMap<>();
+
         try {
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT MEMBER_ID, COUNT(MEMBER_ID)" +
-                            "FROM \"ACCESS\"" +
-                            "GROUP BY MEMBER_ID" +
-                            "HAVING COUNT(MEMBER_ID) >= 1");
+                    "SELECT * " +
+                            "FROM MEMBER M JOIN ( " +
+                            "    SELECT a.MEMBER_ID, COUNT(a.MEMBER_ID) " +
+                            "    FROM \"ACCESS\" a " +
+                            "    GROUP BY a.MEMBER_ID " +
+                            "    HAVING COUNT(a.MEMBER_ID) >= ? " +
+                            ") G on M.MEMBER_ID = G.MEMBER_ID");
+
+            ps.setInt(1, leastAccess);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                MemberModel model = new MemberModel(rs.getInt("member_id"),
+                        rs.getDate("member_since"),
+                        rs.getDate("dob"),
+                        rs.getString("membership_type"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"));
+
+                resultMap.put(model, rs.getInt("count(a.member_id)"));
+            }
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+        return resultMap;
     }
 
     public ArrayList<String> getAccessInBranchString(int branch_id) {

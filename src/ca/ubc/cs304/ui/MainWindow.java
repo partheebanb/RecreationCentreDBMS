@@ -16,6 +16,7 @@ public class MainWindow {
     private JList accessList;
     private JButton viewMembersButton;
     private JButton addAccessButton;
+    private JButton viewComplexButton;
     private DatabaseConnectionHandler dbHandler;
 
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
@@ -62,6 +63,13 @@ public class MainWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 childrenPanel.add(new AccessForm(dbHandler, getSelectedBranchId()));
+            }
+        });
+
+        viewComplexButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                childrenPanel.add(new ComplexQueriesWindow(dbHandler));
             }
         });
 
