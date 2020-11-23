@@ -24,6 +24,7 @@ public class MainWindow {
 
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
 
+    private DefaultListModel<String> areaListModel;
     private DefaultListModel<String> bookingListModel;
     private DefaultListModel<String> accessListModel;
 
@@ -87,6 +88,11 @@ public class MainWindow {
         bookingListModel.removeAllElements();
         for (String booking : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
             bookingListModel.addElement(booking);
+        }
+
+        areaListModel.removeAllElements();
+        for (String area : dbHandler.publicAreaHandler.getAreaInBranchString(getSelectedBranchId())) {
+            areaListModel.addElement(area);
         }
     }
 
