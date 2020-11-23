@@ -55,13 +55,13 @@ public class AccessHandler {
         return resultMap;
     }
 
-    public ArrayList<String> getAccessInBranchString(int branch_id) {
-        ArrayList<String> result = new ArrayList<>();
+    public ArrayList<ArrayList<String>> getAccessInBranchString(int branch_id) {
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
 
         try {
             Statement stmt = connection.createStatement();
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT m.FIRST_NAME, p.AREA_NAME " +
+                    "SELECT m.FIRST_NAME, m.LAST_NAME, p.AREA_NAME, a.ACCESS_DATE " +
                             "FROM \"ACCESS\" a, MEMBER m, PUBLIC_AREA p " +
                             "WHERE a.MEMBER_ID = m.MEMBER_ID " +
                             "  AND p.AREA_ID = a.AREA_ID " +
@@ -72,8 +72,48 @@ public class AccessHandler {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                result.add(rs.getString("first_name") + " " +
-                        rs.getString("area_name"));
+                ArrayList<String> s = new ArrayList<>();
+                s.add(rs.getString("first_name") + " " + rs.getString("last_name"));
+                s.add(rs.getString("area_name"));
+                s.add(rs.getDate("access_date").toString());
+                s.add(rs.getTime("access_date").toString());
+
+                result.add(s);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public ArrayList<ArrayList<String>> getAccessInMemberString(int branch_id) {
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT p.BRANCH_NAME, p.AREA_NAME, a.ACCESS_DATE " +
+                            "FROM \"ACCESS\" a, MEMBER m, PUBLIC_AREA p " +
+                            "WHERE a.MEMBER_ID = m.MEMBER_ID " +
+                            "  AND p.AREA_ID = a.AREA_ID " +
+                            "  AND p.BRANCH_ID = ?");
+
+            ps.setInt(1, branch_id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ArrayList<String> s = new ArrayList<>();
+                s.add(rs.getString("branch_name"));
+                s.add(rs.getString("area_name"));
+                s.add(rs.getDate("access_date").toString());
+                s.add(rs.getTime("access_date").toString());
+
+                result.add(s);
             }
 
             rs.close();

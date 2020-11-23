@@ -207,7 +207,7 @@ public class MemberHandler {
         try {
             PreparedStatement ps = connection.prepareStatement(
                     "SELECT * " +
-                            "FROM MEMBER m" +
+                            "FROM MEMBER m " +
                             "WHERE m.MEMBER_ID = ?");
 
             ps.setInt(1, mid);

@@ -1,11 +1,12 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
+import ca.ubc.cs304.model.BookingModel;
 import ca.ubc.cs304.model.BranchModel;
 import ca.ubc.cs304.model.DayEventModel;
+import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -14,21 +15,21 @@ public class MainWindow {
     private JPanel mainPanel;
     private JButton addBooking;
     private JComboBox branchComboBox;
-    private JList bookingList;
-    private JList accessList;
     private JButton viewMembersButton;
     private JButton addAccessButton;
     private JButton viewComplexButton;
     private JButton addAnEventButton;
-    private JTable eventsTable;
+
     private DatabaseConnectionHandler dbHandler;
 
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
 
-    private DefaultListModel<String> bookingListModel;
-    private DefaultListModel<String> accessListModel;
-
-    private DefaultTableModel eventsTableModel = new DefaultTableModel();
+    private JTable bookingTable;
+    private JTable accessTable;
+    private JTable eventsTable;
+    private TableModel bookingTableModel = new TableModel();
+    private TableModel accessTableModel = new TableModel();
+    private TableModel eventsTableModel = new TableModel();
 
     public MainWindow(DatabaseConnectionHandler dbHandler) {
         this.dbHandler = dbHandler;
@@ -47,9 +48,21 @@ public class MainWindow {
         // Set up the branch choice box
         setupBranchComboBox();
 
-        // Setup all the list views
-        accessList.setModel(accessListModel);
-        bookingList.setModel(bookingListModel);
+        // Setup all the table views
+        bookingTable.setModel(bookingTableModel);
+
+        bookingTableModel.addColumn("Member Name");
+        bookingTableModel.addColumn("Booking Date");
+        bookingTableModel.addColumn("Booking Time");
+        bookingTableModel.addColumn("Booking Reserves");
+
+        accessTable.setModel(accessTableModel);
+
+        accessTableModel.addColumn("Member Name");
+        accessTableModel.addColumn("Area Name");
+        accessTableModel.addColumn("Access Date");
+        accessTableModel.addColumn("Access Time");
+
         eventsTable.setModel(eventsTableModel);
 
         eventsTableModel.addColumn("Event Name");
@@ -58,7 +71,7 @@ public class MainWindow {
         eventsTableModel.addColumn("Event's Hosts");
         eventsTableModel.addColumn("Event's Attendee");
 
-        refreshLists();
+        refreshTables();
 
         // Set what all the buttons do
         // We add the childrens to the children panel so we can kill it easily (less clutter)
@@ -80,27 +93,35 @@ public class MainWindow {
             public void windowGainedFocus(WindowEvent e) {
                 super.windowGainedFocus(e);
                 closeAllChildren();
-                refreshLists();
+                refreshTables();
             }
         });
 
-        refreshLists();
+        refreshTables();
     }
 
     // This refresh of the accesses and booking
-    public void refreshLists() {
-        accessListModel.removeAllElements();
-        bookingListModel.removeAllElements();
+    public void refreshTables() {
+        removeAllElements(bookingTableModel);
+        for (BookingModel booking : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
+            ArrayList<String> s = new ArrayList<>();
+
+            MemberModel member = dbHandler.memberHandler.selectMemberWithId(booking.getMemberId());
+
+            s.add(member.getFirstName() + " " + member.getLastName());
+            s.add(booking.getDate().toString());
+            s.add(booking.getTime().toString());
+            s.add(dbHandler.bookingHandler.getBookablesByBookingString(booking.getId()));
+
+            bookingTableModel.addRow(s.toArray());
+        }
+
+        removeAllElements(accessTableModel);
+        for (ArrayList<String> access : dbHandler.accessHandler.getAccessInBranchString(getSelectedBranchId())) {
+            accessTableModel.addRow(access.toArray());
+        }
+
         removeAllElements(eventsTableModel);
-
-        for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedBranchId())) {
-            accessListModel.addElement(access);
-        }
-
-        for (String booking : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
-            bookingListModel.addElement(booking);
-        }
-
         for (DayEventModel event : dbHandler.eventHandler.getEventModelOnBranch(getSelectedBranchId())) {
             ArrayList<String> s = new ArrayList<>();
             s.add(event.getName());
@@ -122,7 +143,7 @@ public class MainWindow {
         branchComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                refreshLists();
+                refreshTables();
             }
         });
     }
@@ -132,7 +153,7 @@ public class MainWindow {
         return selectedBranch.getId();
     }
 
-    private void removeAllElements(DefaultTableModel tableModel) {
+    private void removeAllElements(TableModel tableModel) {
         while (tableModel.getRowCount() != 0)
             tableModel.removeRow(0);
     }
@@ -148,13 +169,5 @@ public class MainWindow {
         for(DisposableWindow disposableWindow : childrenPanel) {
             disposableWindow.close();
         }
-    }
-
-    private void createUIComponents() {
-        accessListModel = new DefaultListModel<>();
-        bookingListModel = new DefaultListModel<>();
-
-        accessList = new JList(accessListModel);
-        bookingList = new JList(bookingListModel);
     }
 }

@@ -114,9 +114,9 @@ public class MemberWindow implements DisposableWindow {
 
     private void refreshList() {
         accessListModel.removeAllElements();
-        for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedMemberID())) {
-            accessListModel.addElement(access);
-        }
+        //for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedMemberID())) {
+        //    accessListModel.addElement(access);
+        //}
 
         bookingListModel.removeAllElements();
         for (String booking : dbHandler.bookingHandler.getBookingByMemberId(getSelectedMemberID())) {
