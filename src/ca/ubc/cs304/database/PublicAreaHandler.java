@@ -55,54 +55,6 @@ public class PublicAreaHandler {
         }
     }
 
-    public int getNextId() {
-        try {
-            PreparedStatement ps = connection.prepareStatement("SELECT MAX(area_id) " +
-                    "FROM public_area");
-
-            ResultSet maxAreaId = ps.executeQuery();
-            if (maxAreaId.next()) {
-                return maxAreaId.getInt("MAX(AREA_ID)") + 1;
-            }
-
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-        return -1;
-    }
-
-    public ArrayList<String> getAreaInBranchString(int branch_id) {
-        ArrayList<String> result = new ArrayList<>();
-
-        try {
-            Statement stmt = connection.createStatement();
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT AREA_NAME, IS_OUTDOOR " +
-                        "FROM PUBLIC_AREA p " +
-                        "WHERE p.BRANCH_ID = ?");
-
-            ps.setInt(1, branch_id);
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                result.add(rs.getString("area_name") + " " +
-                        rs.getString("is_outdoor"));
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-
-        return result;
-    }
-
     private void rollbackConnection() {
         try  {
             connection.rollback();

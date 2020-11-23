@@ -23,7 +23,6 @@ public class MainWindow {
 
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
 
-    private DefaultListModel<String> areaListModel;
     private DefaultListModel<String> bookingListModel;
     private DefaultListModel<String> accessListModel;
 
@@ -72,9 +71,14 @@ public class MainWindow {
     }
 
     public void refreshLists() {
+//        accessListModel.removeAllElements();
+//        for (String accessRelation : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
+//    //        accessListModel.addElement(accessRelation);
+//        }
+
         accessListModel.removeAllElements();
-        for (String accessRelation : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
-    //        accessListModel.addElement(accessRelation);
+        for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedBranchId())) {
+            accessListModel.addElement(access);
         }
 
         bookingListModel.removeAllElements();
@@ -82,10 +86,6 @@ public class MainWindow {
             bookingListModel.addElement(booking);
         }
 
-        areaListModel.removeAllElements();
-        for (String area : dbHandler.publicAreaHandler.getAreaInBranchString(getSelectedBranchId())) {
-            areaListModel.addElement(area);
-        }
     }
 
     private void setupBranchComboBox() {

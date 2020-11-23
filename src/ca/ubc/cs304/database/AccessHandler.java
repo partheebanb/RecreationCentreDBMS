@@ -2,9 +2,8 @@ package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.AccessRelation;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class AccessHandler {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
@@ -29,6 +28,60 @@ public class AccessHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+    }
+
+    public int getNextId() {
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT MAX(access_id) " +
+                    "FROM access");
+
+            ResultSet maxAccessId = ps.executeQuery();
+            if (maxAccessId.next()) {
+                return maxAccessId.getInt("MAX(AREA_ID)") + 1;
+            }
+
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return -1;
+    }
+
+    public ArrayList<String> getAccessInBranchString(int branch_id) {
+        ArrayList<String> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT m.FIRST_NAME, p.AREA_NAME " +
+                            "FROM ACCESS a, MEMBER m, PUBLIC_AREA p " +
+                            "WHERE a.MEMBER_ID = m.MEMBER_ID " +
+                            "  AND p.AREA_ID = a.AREA_ID " +
+                            "  AND m.MEMBER_ID in (" +
+                            "      SELECT MEMBER_ID " +
+                            "      FROM SIGN_UP " +
+                            "      WHERE BRANCH_ID = ? " +
+                            ")");
+
+            ps.setInt(1, branch_id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                result.add(rs.getString("first_name") + " " +
+                        rs.getString("area_name"));
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
     }
 
     private void rollbackConnection() {
