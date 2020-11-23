@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import ca.ubc.cs304.delegates.LoginWindowDelegate;
 
 /**
- * The class is only responsible for displaying and handling the login GUI. 
+ * The class is only responsible for displaying and handling the login GUI.
  */
 public class LoginWindow extends JFrame implements ActionListener {
 	private static final int TEXT_FIELD_WIDTH = 10;
@@ -33,7 +33,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 	// components of the login window
 	private JTextField usernameField;
 	private JPasswordField passwordField;
-	
+
 	// delegate
 	private LoginWindowDelegate delegate;
 
@@ -64,13 +64,13 @@ public class LoginWindow extends JFrame implements ActionListener {
 		contentPane.setLayout(gb);
 		contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		// place the username label 
+		// place the username label
 		c.gridwidth = GridBagConstraints.RELATIVE;
 		c.insets = new Insets(10, 10, 5, 0);
 		gb.setConstraints(usernameLabel, c);
 		contentPane.add(usernameLabel);
 
-		// place the text field for the username 
+		// place the text field for the username
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(10, 0, 5, 10);
 		gb.setConstraints(usernameField, c);
@@ -82,7 +82,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 		gb.setConstraints(passwordLabel, c);
 		contentPane.add(passwordLabel);
 
-		// place the password field 
+		// place the password field
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 0, 10, 10);
 		gb.setConstraints(passwordField, c);
@@ -114,21 +114,21 @@ public class LoginWindow extends JFrame implements ActionListener {
 		this.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 
 		// make the window visible
-		 this.setVisible(true);
+		this.setVisible(true);
 
 		// place the cursor in the text field for the username
 		usernameField.requestFocus();
 	}
-	
+
 	public void handleLoginFailed() {
 		loginAttempts++;
 		passwordField.setText(""); // clear password field
 	}
-	
+
 	public boolean hasReachedMaxLoginAttempts() {
 		return (loginAttempts >= MAX_LOGIN_ATTEMPTS);
 	}
-	
+
 	/**
 	 * ActionListener Methods
 	 */

@@ -14,7 +14,7 @@ public class DatabaseConnectionHandler {
 	private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
 	private static final String EXCEPTION_TAG = "[EXCEPTION]";
 
-	private Connection connection = null;
+    private Connection connection = null;
 	public PublicAreaHandler publicAreaHandler = null;
 	public BookableHandler bookableHandler = null;
 	public MemberHandler memberHandler = null;
@@ -22,7 +22,8 @@ public class DatabaseConnectionHandler {
 	public BranchHandler branchHandler = null;
 	public BookingHandler bookingHandler = null;
 	public ReserveHandler reserveHandler = null;
-	
+	public ProgramHandler programHandler;
+
 	public DatabaseConnectionHandler() {
 		try {
 			// Load the Oracle JDBC driver

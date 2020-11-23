@@ -65,6 +65,35 @@ public class BookingHandler {
         return result;
     }
 
+    public ArrayList<String> getBookingByMemberId(int mid) {
+        ArrayList<String> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement("SELECT FIRST_NAME, LAST_NAME, BOOKING_DATE " +
+                    "FROM MEMBER m, BOOKING b " +
+                    "WHERE m.MEMBER_ID = b.MEMBER_ID" +
+                    "AND b.MEMBER_ID = ?");
+
+            ps.setInt(1, mid);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                result.add(rs.getString("first_name") + " " +
+                        rs.getString("last_name") + "     | " +
+                        rs.getTime("booking_date").toString());
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
     public void insertBooking(BookingModel bookingModel) {
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO BOOKING VALUES (?,?,?,?)");
