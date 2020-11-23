@@ -6,6 +6,7 @@ import ca.ubc.cs304.model.EquipmentModel;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BookableHandler {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
@@ -123,17 +124,27 @@ public class BookableHandler {
     }
 
     // AGGREGATION with GROUP BY
-    public void avgBookableGroupedByEvents() {
+    public HashMap<String, Integer> avgBookableGroupedByEvents() {
+        HashMap<String, Integer> eventToUses = new HashMap<>();
         try {
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT COUNT(BOOKABLE.BOOKABLE_ID), EVENT.EVENT_ID " +
-                            "FROM BOOKABLE, EVENT, USE " +
-                            "WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID " +
-                            "GROUP BY (EVENT.EVENT_ID)");
+                    "SELECT NAME, G.EVENT_ID, \"COUNT(BOOKABLE.BOOKABLE_ID)\" " +
+                    "FROM EVENT, (SELECT EVENT.EVENT_ID, COUNT(BOOKABLE.BOOKABLE_ID) " +
+                    "    FROM BOOKABLE, EVENT, USE " +
+                    "    WHERE BOOKABLE.BOOKABLE_ID = USE.BOOKABLE_ID AND USE.EVENT_ID = EVENT.EVENT_ID " +
+                    "    GROUP BY (EVENT.EVENT_ID)) G " +
+                    "    WHERE G.EVENT_ID = EVENT.EVENT_ID");
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                eventToUses.put(rs.getString("name") + " " + rs.getString("event_id"), rs.getInt("count(bookable.bookable_id)"));
+            }
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+        return eventToUses;
     }
 
     // nested aggregation

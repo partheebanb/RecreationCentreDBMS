@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ public class ComplexQueriesWindow implements DisposableWindow {
     private JButton accessAggregateRefreshButton;
     private JLabel reservationInLastEvent;
     private JList memberSignUpAll;
+    private JTable eventBookableCountTable;
     private DatabaseConnectionHandler dbHandler;
 
     private DefaultTableModel accessAggregateTableModel = new DefaultTableModel();
@@ -26,7 +28,7 @@ public class ComplexQueriesWindow implements DisposableWindow {
     public ComplexQueriesWindow(DatabaseConnectionHandler dbHandler) {
         this.dbHandler = dbHandler;
 
-        JFrame frame = new JFrame("Booking Form");
+        JFrame frame = new JFrame("Complex Queries");
         frame.setContentPane(this.jpanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
@@ -36,16 +38,19 @@ public class ComplexQueriesWindow implements DisposableWindow {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
-        reservationInLastEvent.setText(dbHandler.bookableHandler.countOfBookablesUsedInTheLatestEventDate() + "");
 
+        // One of complex query. Find the number of reservation in the most recent events
+        reservationInLastEvent.setText(dbHandler.bookableHandler.countOfBookablesUsedInTheLatestEventDate() + "");
         // Big font
         reservationInLastEvent.setFont(new Font(reservationInLastEvent.getFont().getName(), Font.BOLD, reservationInLastEvent.getFont().getSize() + 4));
 
-        setupMemberDivisionList();
 
+        setupEventBookableCountTable();
+        setupMemberDivisionList();
         setupAccessAggregateTable();
     }
 
+    // One of complex query. Use division to find the members that signs up in all the branches
     public void setupMemberDivisionList() {
         DefaultListModel defaultListModel = new DefaultListModel();
         memberSignUpAll.setModel(defaultListModel);
@@ -54,8 +59,27 @@ public class ComplexQueriesWindow implements DisposableWindow {
         }
     }
 
+    // One of complex query. Find the number of bookable each events uses
+    public void setupEventBookableCountTable() {
+        DefaultTableModel model = new DefaultTableModel();
+        eventBookableCountTable.setModel(model);
+
+        model.addColumn("Name");
+        model.addColumn("Count");
+
+        HashMap<String, Integer> map = dbHandler.bookableHandler.avgBookableGroupedByEvents();
+        for (String s : map.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList())) {
+            model.addRow(new String[] {s, map.get(s) + ""});
+        }
+    }
+
+    // One of complex query. Find the number of public area access for each member
+    // that is larger than accessAggregateMinCount text field
     public void setupAccessAggregateTable() {
         accessAggregateTable.setModel(accessAggregateTableModel);
+
         accessAggregateTableModel.addColumn("Name");
         accessAggregateTableModel.addColumn("Count");
 
@@ -69,6 +93,8 @@ public class ComplexQueriesWindow implements DisposableWindow {
         });
     }
 
+    // Get the mincount, if user input malicious value, default it to 0
+    // Then add the <Name, Access Count> pair into the table
     public void refreshAccessAggregateTable() {
         int minCount = 0;
         try {

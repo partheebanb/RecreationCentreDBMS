@@ -38,41 +38,28 @@ public class MainWindow {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
+        // Set up the branch choice box
         setupBranchComboBox();
-        refreshLists();
 
+        // Setup all the list views
         accessList.setModel(accessListModel);
         bookingList.setModel(bookingListModel);
 
-        // When the add booking button is pressed, create a window that helps to add booking
-        addBooking.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                childrenPanel.add(new BookingForm(dbHandler, getSelectedBranchId()));
-            }
-        });
+        refreshLists();
 
-        viewMembersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                childrenPanel.add(new MemberWindow(dbHandler));
-            }
-        });
+        // Set what all the buttons do
+        // We add the childrens to the children panel so we can kill it easily (less clutter)
+        addBooking.addActionListener(e ->
+                childrenPanel.add(new BookingForm(dbHandler, getSelectedBranchId())));
 
-        addAccessButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                childrenPanel.add(new AccessForm(dbHandler, getSelectedBranchId()));
-            }
-        });
+        addAccessButton.addActionListener(e ->
+                childrenPanel.add(new AccessForm(dbHandler, getSelectedBranchId())));
 
-        viewComplexButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                childrenPanel.add(new ComplexQueriesWindow(dbHandler));
-            }
-        });
+        viewMembersButton.addActionListener(e ->
+                childrenPanel.add(new MemberWindow(dbHandler)));
 
+        viewComplexButton.addActionListener(e ->
+                childrenPanel.add(new ComplexQueriesWindow(dbHandler)));
 
         // We don't want the windows to be too cluttered. So if we press the main window, we also kill all the children windows
         frame.addWindowFocusListener(new WindowAdapter() {
@@ -87,11 +74,7 @@ public class MainWindow {
         refreshLists();
     }
 
-    public int getSelectedBranchId() {
-        BranchModel selectedBranch = (BranchModel) branchComboBox.getSelectedItem();
-        return selectedBranch.getId();
-    }
-
+    // This refresh of the accesses and booking
     public void refreshLists() {
         accessListModel.removeAllElements();
         bookingListModel.removeAllElements();
@@ -106,6 +89,8 @@ public class MainWindow {
 
     }
 
+    // Let the user choose which branch it want to operate on
+    // This data will be used to generate the lists and when creating bookings/accesses
     private void setupBranchComboBox() {
         for (BranchModel branchModel : dbHandler.branchHandler.getBranchInfo()) {
             branchComboBox.addItem(branchModel);
@@ -116,6 +101,11 @@ public class MainWindow {
                 refreshLists();
             }
         });
+    }
+
+    public int getSelectedBranchId() {
+        BranchModel selectedBranch = (BranchModel) branchComboBox.getSelectedItem();
+        return selectedBranch.getId();
     }
 
     /*

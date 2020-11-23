@@ -43,10 +43,10 @@ public class BookingForm implements DisposableWindow {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
+        // Setup UI stuff
         setupDateSpinner();
         setupEnterButton();
         setupMemberComboBox();
-
         setupAddingBookable();
 
         // We don't want the windows to be too cluttered. So if we press the main window, we also kill all the children windows
@@ -120,6 +120,7 @@ public class BookingForm implements DisposableWindow {
         });
     }
 
+    // This configure the choice box for the bookable. It will change when the user re-select the equipment or room choice
     private void refreshBookableList() {
         bookableChoice.removeAllItems();
         if (equipOrRoom.getSelectedIndex() == 0) {

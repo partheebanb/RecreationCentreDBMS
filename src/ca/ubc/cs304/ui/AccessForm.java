@@ -26,7 +26,7 @@ public class AccessForm implements DisposableWindow {
         this.dbHandler = dbHandler;
         this.branchId = branchId;
 
-        JFrame frame = new JFrame("Booking Form");
+        JFrame frame = new JFrame("Access Form");
         frame.setContentPane(this.jpanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();

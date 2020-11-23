@@ -46,34 +46,23 @@ public class RecCenterDBMS implements LoginWindowDelegate {
 	}
 
 	public void launchGUI(String username, String password) {
-
 		if (dbHandler.login(username, password)) {
 			MainWindow mainWindow = new MainWindow(this.dbHandler);
 		}
 	}
-	
-    /**
-	 * TerminalTransactionsDelegate Implementation
-	 * 
-     * The TerminalTransaction instance tells us that it is done with what it's 
-     * doing so we are cleaning up the connection since it's no longer needed.
-     */ 
-    public void terminalTransactionsFinished() {
-    	dbHandler.close();
-    	dbHandler = null;
-    	
-    	System.exit(0);
-    }
     
 	/**
 	 * Main method called at launch time
 	 */
 	public static void main(String args[]) {
 		RecCenterDBMS recCenterDBMS = new RecCenterDBMS();
-		if (args.length == 2) {
 
+		// If args == 2, it means user passed in schema name and password
+		// By pass the login screen and just login
+		if (args.length == 2) {
 			recCenterDBMS.launchGUI(args[0], args[1]);
 
+		// Else show the login page
 		} else {
 			recCenterDBMS.start();
 		}

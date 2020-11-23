@@ -15,6 +15,9 @@ public class DatabaseConnectionHandler {
 	private static final String EXCEPTION_TAG = "[EXCEPTION]";
 
     private Connection connection = null;
+
+	// These are the handlers for each Models
+	// We chose to modulate for organization sake
 	public PublicAreaHandler publicAreaHandler = null;
 	public BookableHandler bookableHandler = null;
 	public MemberHandler memberHandler = null;
@@ -54,6 +57,8 @@ public class DatabaseConnectionHandler {
 			connection = DriverManager.getConnection(ORACLE_URL, username, password);
 			connection.setAutoCommit(false);
 
+			// These are the handlers for each Models
+			// We chose to modulate for organization sake
 			publicAreaHandler = new PublicAreaHandler(connection);
 			bookableHandler = new BookableHandler(connection);
 			memberHandler = new MemberHandler(connection);

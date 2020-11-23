@@ -41,6 +41,7 @@ public class MemberWindow implements DisposableWindow {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
+        // Set up the listviews
         accessListModel = new DefaultListModel<>();
         bookingListModel = new DefaultListModel<>();
         programListModel = new DefaultListModel<>();
