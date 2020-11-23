@@ -54,6 +54,32 @@ public class PublicAreaHandler {
         }
     }
 
+    public ArrayList<AreaModel> getAreaInfo() {
+        ArrayList<AreaModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM public_area");
+
+            while (rs.next()) {
+                PublicAreaModel model = new PublicAreaModel(
+                        rs.getInt("areaId");
+                        rs.getString("name"),
+                        rs.getString("type"),
+                        rs.getString("isOutdoor").charAt(0),
+                        rs.getInt("branchId");
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
     private void rollbackConnection() {
         try  {
             connection.rollback();
