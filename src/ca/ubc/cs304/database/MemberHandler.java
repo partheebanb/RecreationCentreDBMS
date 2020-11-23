@@ -1,6 +1,5 @@
 package ca.ubc.cs304.database;
 
-import ca.ubc.cs304.model.BranchModel;
 import ca.ubc.cs304.model.MemberModel;
 
 import java.sql.*;

@@ -2,9 +2,8 @@ package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.AccessRelation;
 import ca.ubc.cs304.model.PublicAreaModel;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 
 public class PublicAreaHandler {
@@ -56,8 +55,8 @@ public class PublicAreaHandler {
         }
     }
 
-    public ArrayList<AreaModel> getAreaInfo() {
-        ArrayList<AreaModel> result = new ArrayList<>();
+    public ArrayList<PublicAreaModel> getAreaInfo() {
+        ArrayList<PublicAreaModel> result = new ArrayList<>();
 
         try {
             Statement stmt = connection.createStatement();
@@ -65,11 +64,11 @@ public class PublicAreaHandler {
 
             while (rs.next()) {
                 PublicAreaModel model = new PublicAreaModel(
-                        rs.getInt("areaId");
+                        rs.getInt("areaId"),
                         rs.getString("name"),
                         rs.getString("type"),
-                        rs.getString("isOutdoor").charAt(0),
-                        rs.getInt("branchId");
+                        rs.getBoolean("isOutdoor"),
+                        rs.getInt("branchId"));
                 result.add(model);
             }
 
