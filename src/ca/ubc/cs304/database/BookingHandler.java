@@ -70,9 +70,10 @@ public class BookingHandler {
 
         try {
             Statement stmt = connection.createStatement();
-            PreparedStatement ps = connection.prepareStatement("SELECT FIRST_NAME, LAST_NAME, BOOKING_DATE " +
-                    "FROM MEMBER m, BOOKING b " +
-                    "WHERE m.MEMBER_ID = b.MEMBER_ID" +
+            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+                    "FROM MEMBER m, BOOKING b, BRANCH br " +
+                    "WHERE m.MEMBER_ID = b.MEMBER_ID " +
+                    "AND br.BRANCH_ID = b.BRANCH_ID " +
                     "AND b.MEMBER_ID = ?");
 
             ps.setInt(1, mid);
@@ -80,8 +81,8 @@ public class BookingHandler {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                result.add(rs.getString("first_name") + " " +
-                        rs.getString("last_name") + "     | " +
+                result.add(
+                        rs.getString("branch_name") + "    |" +
                         rs.getTime("booking_date").toString());
             }
 

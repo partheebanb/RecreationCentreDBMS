@@ -61,6 +61,7 @@ public class DatabaseConnectionHandler {
 			branchHandler = new BranchHandler(connection);
 			bookingHandler = new BookingHandler(connection);
 			reserveHandler = new ReserveHandler(connection);
+			programHandler = new ProgramHandler(connection);
 	
 			System.out.println("\nConnected to Oracle!");
 			return true;

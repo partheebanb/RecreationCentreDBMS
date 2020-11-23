@@ -19,19 +19,20 @@ public class ProgramHandler {
         try {
             Statement stmt = connection.createStatement();
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT m.FIRST_NAME, p.NAME " +
+                    "SELECT * " +
                             "FROM ATTEND a, MEMBER m, PROGRAM p " +
                             "WHERE a.MEMBER_ID = m.MEMBER_ID " +
-                            "AND a.EVENT_ID = p.EVENT_ID" +
-                            "AND m.MEMBER_ID = ?");
+                            "    AND a.EVENT_ID = p.EVENT_ID " +
+                            "    AND m.MEMBER_ID = ?");
 
             ps.setInt(1, mid);
 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                result.add(rs.getString("first_name") + " " +
-                        rs.getString("program_name"));
+                result.add(
+                        rs.getString("name") + " from " +
+                        rs.getDate("start_date").toString());
             }
 
             rs.close();

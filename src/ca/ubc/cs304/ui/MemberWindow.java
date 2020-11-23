@@ -41,6 +41,14 @@ public class MemberWindow implements DisposableWindow {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
+        accessListModel = new DefaultListModel<>();
+        bookingListModel = new DefaultListModel<>();
+        programListModel = new DefaultListModel<>();
+
+        accessList.setModel(accessListModel);
+        bookingList.setModel(bookingListModel);
+        programList.setModel(programListModel);
+
         setupMemberComboBox();
         setupEmailButtons();
 
@@ -73,7 +81,7 @@ public class MemberWindow implements DisposableWindow {
 
     private void refreshList() {
         accessListModel.removeAllElements();
-        for (String access : dbHandler.accessHandler.getAccessByMemberId(getSelectedMemberID())) {
+        for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedMemberID())) {
             accessListModel.addElement(access);
         }
 
@@ -101,16 +109,6 @@ public class MemberWindow implements DisposableWindow {
         for (MemberModel memberModel: dbHandler.memberHandler.getMemberInfo()) {
             memberComboBox.addItem(memberModel);
         }
-    }
-
-    private void createUIComponents() {
-        accessListModel = new DefaultListModel<>();
-        bookingListModel = new DefaultListModel<>();
-        programListModel = new DefaultListModel<>();
-
-        accessList = new JList(accessListModel);
-        bookingList = new JList(bookingListModel);
-        programList = new JList(programListModel);
     }
 
     public void close() {

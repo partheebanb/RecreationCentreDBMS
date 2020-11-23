@@ -40,9 +40,9 @@ public class AccessHandler {
                             "FROM \"ACCESS\" a, MEMBER m, PUBLIC_AREA p " +
                             "WHERE a.MEMBER_ID = m.MEMBER_ID " +
                             "  AND p.AREA_ID = a.AREA_ID " +
+                            "  AND p.BRANCH_ID = ?");
 
-
-                            ps.setInt(1, branch_id);
+            ps.setInt(1, branch_id);
 
             ResultSet rs = ps.executeQuery();
 
@@ -58,6 +58,25 @@ public class AccessHandler {
         }
 
         return result;
+    }
+
+    public void insertAccess(AccessRelation accessRelation) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO \"ACCESS\"  (MEMBER_ID, AREA_ID, ACCESS_DATE) " +
+                    "VALUES (?,?,?)");
+            ps.setInt(1, accessRelation.getMemberId());
+            ps.setDate(2, accessRelation.getDate());
+            ps.setInt(3, accessRelation.getMemberId());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
     }
 
     private void rollbackConnection() {
