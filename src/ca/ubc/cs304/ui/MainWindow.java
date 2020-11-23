@@ -32,6 +32,7 @@ public class MainWindow {
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
         setupBranchComboBox();
+        System.out.println(dbHandler.bookingHandler.getNextId());
 
         // When the add booking button is pressed, create a window that helps to add booking
         addBooking.addActionListener(new ActionListener() {

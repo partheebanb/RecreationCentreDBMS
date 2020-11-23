@@ -1,8 +1,11 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
+import ca.ubc.cs304.helper.DateUtils;
 import ca.ubc.cs304.model.BookableModel;
+import ca.ubc.cs304.model.BookingModel;
 import ca.ubc.cs304.model.MemberModel;
+import ca.ubc.cs304.model.ReserveRelation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,7 +64,21 @@ public class BookingForm implements DisposableWindow {
         enterForm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(memberComboBox.getSelectedItem().toString());
+                int bookingNumber = dbHandler.bookingHandler.getNextId();
+                BookingModel bookingModel = new BookingModel(bookingNumber,
+                        DateUtils.normalize((java.util.Date) dateSpinner.getValue()),
+                        ((MemberModel) memberComboBox.getSelectedItem()).getId());
+
+                dbHandler.bookingHandler.insertBooking(bookingModel);
+
+                for (int i = 0; i < model.getSize(); i++) {
+                    BookableModel bookableModel = model.getElementAt(i);
+
+                    ReserveRelation reserveRelation = new ReserveRelation(bookingNumber, bookableModel.getBookableId());
+                    dbHandler.reserveHandler.insertReserve(reserveRelation);
+                }
+
+                close();
             }
         });
     }

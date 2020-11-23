@@ -20,6 +20,8 @@ public class DatabaseConnectionHandler {
 	public MemberHandler memberHandler = null;
 	public AccessHandler accessHandler = null;
 	public BranchHandler branchHandler = null;
+	public BookingHandler bookingHandler = null;
+	public ReserveHandler reserveHandler = null;
 	
 	public DatabaseConnectionHandler() {
 		try {
@@ -56,6 +58,8 @@ public class DatabaseConnectionHandler {
 			memberHandler = new MemberHandler(connection);
 			accessHandler = new AccessHandler(connection);
 			branchHandler = new BranchHandler(connection);
+			bookingHandler = new BookingHandler(connection);
+			reserveHandler = new ReserveHandler(connection);
 	
 			System.out.println("\nConnected to Oracle!");
 			return true;

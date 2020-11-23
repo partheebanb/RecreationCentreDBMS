@@ -15,10 +15,6 @@ public class BranchHandler {
         this.connection = connection;
     }
 
-    public void getAllBranch() {
-
-    }
-
     public void deleteBranch(int branchId) {
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
