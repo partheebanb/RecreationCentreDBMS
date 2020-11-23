@@ -20,8 +20,6 @@ public class MainWindow {
     private JButton viewMembersButton;
     private DatabaseConnectionHandler dbHandler;
 
-    private HashMap<Integer, String> memberIdToName;
-
     private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
 
     private DefaultListModel<String> bookingListModel;
@@ -43,6 +41,9 @@ public class MainWindow {
 
         setupBranchComboBox();
         refreshLists();
+
+        accessList.setModel(accessListModel);
+        bookingList.setModel(bookingListModel);
 
         // When the add booking button is pressed, create a window that helps to add booking
         addBooking.addActionListener(new ActionListener() {
@@ -79,17 +80,13 @@ public class MainWindow {
     }
 
     public void refreshLists() {
-//        accessListModel.removeAllElements();
-//        for (String accessRelation : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
-//    //        accessListModel.addElement(accessRelation);
-//        }
-
         accessListModel.removeAllElements();
+        bookingListModel.removeAllElements();
+
         for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedBranchId())) {
             accessListModel.addElement(access);
         }
 
-        bookingListModel.removeAllElements();
         for (String booking : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
             bookingListModel.addElement(booking);
         }

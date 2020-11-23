@@ -37,14 +37,10 @@ public class AccessHandler {
             Statement stmt = connection.createStatement();
             PreparedStatement ps = connection.prepareStatement(
                     "SELECT m.FIRST_NAME, p.AREA_NAME " +
-                            "FROM ACCESS a, MEMBER m, PUBLIC_AREA p " +
+                            "FROM \"ACCESS\" a, MEMBER m, PUBLIC_AREA p " +
                             "WHERE a.MEMBER_ID = m.MEMBER_ID " +
                             "  AND p.AREA_ID = a.AREA_ID " +
-                            "  AND m.MEMBER_ID in (" +
-                            "      SELECT MEMBER_ID " +
-                            "      FROM SIGN_UP " +
-                            "      WHERE BRANCH_ID = ? " +
-                            ")");
+                            "  AND p.BRANCH_ID = ?");
 
             ps.setInt(1, branch_id);
 
