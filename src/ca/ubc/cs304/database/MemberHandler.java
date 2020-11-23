@@ -116,7 +116,7 @@ public class MemberHandler {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(
-                    "SELECT FIRST_NAME " +
+                    "SELECT FIRST_NAME, LAST_NAME " +
                             "FROM member m " +
                             "WHERE NOT EXISTS " +
                             "(SELECT b.branch_id " +
@@ -127,7 +127,7 @@ public class MemberHandler {
                             "       WHERE r.branch_id = b.branch_id AND m.member_id = r.member_id))");
 
             while (rs.next()) {
-                String fn = rs.getString("first_name");
+                String fn = rs.getString("first_name") + " " + rs.getString("last_name");
                 result.add(fn);
             }
 

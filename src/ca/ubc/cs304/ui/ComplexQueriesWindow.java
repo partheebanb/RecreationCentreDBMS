@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,8 @@ public class ComplexQueriesWindow implements DisposableWindow {
     private JTable accessAggregateTable;
     private JTextField accessAggregateMinCount;
     private JButton accessAggregateRefreshButton;
-    private JLabel ReservationInLastEvent;
+    private JLabel reservationInLastEvent;
+    private JList memberSignUpAll;
     private DatabaseConnectionHandler dbHandler;
 
     private DefaultTableModel accessAggregateTableModel = new DefaultTableModel();
@@ -36,9 +36,22 @@ public class ComplexQueriesWindow implements DisposableWindow {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
-        ReservationInLastEvent.setText(dbHandler.bookableHandler.countOfBookablesUsedInTheLatestEventDate() + " Bookable's Reservation");
+        reservationInLastEvent.setText(dbHandler.bookableHandler.countOfBookablesUsedInTheLatestEventDate() + "");
+
+        // Big font
+        reservationInLastEvent.setFont(new Font(reservationInLastEvent.getFont().getName(), Font.BOLD, reservationInLastEvent.getFont().getSize() + 4));
+
+        setupMemberDivisionList();
 
         setupAccessAggregateTable();
+    }
+
+    public void setupMemberDivisionList() {
+        DefaultListModel defaultListModel = new DefaultListModel();
+        memberSignUpAll.setModel(defaultListModel);
+        for (String s : dbHandler.memberHandler.membersInAllBranches()) {
+            defaultListModel.addElement(s);
+        }
     }
 
     public void setupAccessAggregateTable() {
