@@ -38,11 +38,12 @@ public class PublicAreaHandler {
 
     public void insertPublicArea(PublicAreaModel model) {
         try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO public_area VALUES (?,?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO public_area VALUES (?,?,?,?,?)");
             ps.setInt(1, model.getAreaId());
             ps.setString(2, model.getType());
             ps.setString(3, model.getName());
             ps.setBoolean(4, model.isOutdoor());
+            ps.setInt(5, model.getBranchId());
 
 
             ps.executeUpdate();
