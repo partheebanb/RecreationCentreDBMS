@@ -232,5 +232,24 @@ public class MemberHandler {
         }
         return result;
     }
+
+    public void deleteMember(int memberId) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM member WHERE member_id = ?");
+            ps.setInt(1, memberId);
+
+            int rowCount = ps.executeUpdate();
+            if (rowCount == 0) {
+                System.out.println(WARNING_TAG + " Member " + memberId + " does not exist!");
+            }
+
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
 }
 
