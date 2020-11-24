@@ -15,6 +15,7 @@ public class BookingHandler {
         this.connection = connection;
     }
 
+    // Return the next smallest available booking_id
     public int getNextId() {
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT MAX(BOOKING_ID) " +
@@ -35,7 +36,8 @@ public class BookingHandler {
         return -1;
     }
 
-    public ArrayList<BookingModel> getBookingInBranchString(int branch_id) {
+    // Get all BookingModel made in a specific branch
+    public ArrayList<BookingModel> getBookingInBranch(int branch_id) {
         ArrayList<BookingModel> result = new ArrayList<>();
 
         try {
@@ -67,7 +69,44 @@ public class BookingHandler {
         return result;
     }
 
-    public String getBookablesByBookingString(int bookingId) {
+    // Get all BookingModel made by a specific member
+    public ArrayList<BookingModel> getBookingByMember(int memberId) {
+        ArrayList<BookingModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
+                            "FROM MEMBER m, BOOKING b, BRANCH br " +
+                            "WHERE m.MEMBER_ID = b.MEMBER_ID " +
+                            "AND br.BRANCH_ID = b.BRANCH_ID " +
+                            "AND b.MEMBER_ID = ?");
+
+            ps.setInt(1, memberId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookingModel bookingModel = new BookingModel(rs.getInt("booking_id"),
+                        rs.getDate("booking_date"),
+                        rs.getTime("booking_date"),
+                        rs.getInt("member_id"),
+                        rs.getInt("branch_id"));
+
+                result.add(bookingModel);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    // Get a comma-separated string for all the bookable names used in a specific event
+    public String getBookableByBookingCSV(int bookingId) {
         String result = "";
 
         try {
@@ -97,41 +136,6 @@ public class BookingHandler {
             stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + "3 " + e.getMessage());
-        }
-
-        return result;
-    }
-
-    public ArrayList<BookingModel> getBookingByMemberId(int mid) {
-        ArrayList<BookingModel> result = new ArrayList<>();
-
-        try {
-            Statement stmt = connection.createStatement();
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * " +
-                    "FROM MEMBER m, BOOKING b, BRANCH br " +
-                    "WHERE m.MEMBER_ID = b.MEMBER_ID " +
-                        "AND br.BRANCH_ID = b.BRANCH_ID " +
-                        "AND b.MEMBER_ID = ?");
-
-            ps.setInt(1, mid);
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                BookingModel bookingModel = new BookingModel(rs.getInt("booking_id"),
-                        rs.getDate("booking_date"),
-                        rs.getTime("booking_date"),
-                        rs.getInt("member_id"),
-                        rs.getInt("branch_id"));
-
-                result.add(bookingModel);
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
         return result;

@@ -133,7 +133,7 @@ public class MemberWindow implements DisposableWindow {
         }
 
         removeAllElements(bookingTableModel);
-        for (BookingModel booking : dbHandler.bookingHandler.getBookingByMemberId(getSelectedMemberID())) {
+        for (BookingModel booking : dbHandler.bookingHandler.getBookingByMember(getSelectedMemberID())) {
             ArrayList<String> s = new ArrayList<>();
 
             BranchModel branchModel = dbHandler.branchHandler.getBranchInfoByBranchId(booking.getBranchId());
@@ -141,7 +141,7 @@ public class MemberWindow implements DisposableWindow {
             s.add(branchModel.getName());
             s.add(booking.getDate().toString());
             s.add(booking.getTime().toString());
-            s.add(dbHandler.bookingHandler.getBookablesByBookingString(booking.getId()));
+            s.add(dbHandler.bookingHandler.getBookableByBookingCSV(booking.getId()));
 
             bookingTableModel.addRow(s.toArray());
         }

@@ -110,7 +110,7 @@ public class MainWindow {
     // This refresh of the accesses and booking
     public void refreshTables() {
         removeAllElements(bookingTableModel);
-        for (BookingModel booking : dbHandler.bookingHandler.getBookingInBranchString(getSelectedBranchId())) {
+        for (BookingModel booking : dbHandler.bookingHandler.getBookingInBranch(getSelectedBranchId())) {
             ArrayList<String> s = new ArrayList<>();
 
             MemberModel member = dbHandler.memberHandler.selectMemberWithId(booking.getMemberId());
@@ -118,7 +118,7 @@ public class MainWindow {
             s.add(member.getFirstName() + " " + member.getLastName());
             s.add(booking.getDate().toString());
             s.add(booking.getTime().toString());
-            s.add(dbHandler.bookingHandler.getBookablesByBookingString(booking.getId()));
+            s.add(dbHandler.bookingHandler.getBookableByBookingCSV(booking.getId()));
 
             bookingTableModel.addRow(s.toArray());
         }
