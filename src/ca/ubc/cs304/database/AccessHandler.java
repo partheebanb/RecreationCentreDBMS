@@ -107,7 +107,6 @@ public class AccessHandler {
             ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
         }
     }
 
@@ -143,16 +142,7 @@ public class AccessHandler {
             }
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
         }
         return resultMap;
-    }
-
-    private void rollbackConnection() {
-        try  {
-            connection.rollback();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
     }
 }

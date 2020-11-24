@@ -15,43 +15,7 @@ public class BranchHandler {
         this.connection = connection;
     }
 
-    public void deleteBranch(int branchId) {
-        try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
-            ps.setInt(1, branchId);
-
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                System.out.println(WARNING_TAG + " Branch " + branchId + " does not exist!");
-            }
-
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    public void insertBranch(BranchModel model) {
-        try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO branch VALUES (?,?,?)");
-            ps.setInt(1, model.getId());
-            ps.setString(2, model.getName());
-            ps.setString(3, model.getAddress());
-
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
+    // Get all the BranchModel
     public ArrayList<BranchModel> getBranchInfo() {
         ArrayList<BranchModel> result = new ArrayList<BranchModel>();
 
@@ -75,7 +39,8 @@ public class BranchHandler {
         return result;
     }
 
-    public BranchModel getBranchInfoByBranchId(int branchId) {
+    // Get BranchModel given a specific branch_id
+    public BranchModel getBranchByBranchId(int branchId) {
         try {
             PreparedStatement ps = connection.prepareStatement(
                     "SELECT * " +
@@ -85,7 +50,7 @@ public class BranchHandler {
             ps.setInt(1, branchId);
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()) {
+            if (rs.next()) {
                 BranchModel model = new BranchModel(rs.getInt("branch_id"),
                         rs.getString("branch_name"),
                         rs.getString("branch_address"));
@@ -101,11 +66,12 @@ public class BranchHandler {
         return null;
     }
 
-    public ArrayList<String> getBranchNamesByMemberId(int memberId) {
+    // Get all the names of the branches that a member signs up in
+    public ArrayList<String> getBranchNameByMemberId(int memberId) {
         ArrayList<String> result = new ArrayList<String>();
 
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+            PreparedStatement ps = connection.prepareStatement("SELECT BRANCH_NAME " +
                     "FROM branch b, sign_up s " +
                     "WHERE s.MEMBER_ID = ? AND " +
                             "b.BRANCH_ID = s.BRANCH_ID");
@@ -125,33 +91,5 @@ public class BranchHandler {
         }
 
         return result;
-    }
-
-    public void updateBranch(int id, String name) {
-        try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE branch SET branch_name = ? WHERE branch_id = ?");
-            ps.setString(1, name);
-            ps.setInt(2, id);
-
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                System.out.println(WARNING_TAG + " Branch " + id + " does not exist!");
-            }
-
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    private void rollbackConnection() {
-        try  {
-            connection.rollback();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
     }
 }

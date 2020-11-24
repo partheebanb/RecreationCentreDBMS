@@ -136,7 +136,7 @@ public class MemberWindow implements DisposableWindow {
         for (BookingModel booking : dbHandler.bookingHandler.getBookingByMember(getSelectedMemberID())) {
             ArrayList<String> s = new ArrayList<>();
 
-            BranchModel branchModel = dbHandler.branchHandler.getBranchInfoByBranchId(booking.getBranchId());
+            BranchModel branchModel = dbHandler.branchHandler.getBranchByBranchId(booking.getBranchId());
 
             s.add(branchModel.getName());
             s.add(booking.getDate().toString());
@@ -150,7 +150,7 @@ public class MemberWindow implements DisposableWindow {
         for (DayEventModel event : dbHandler.eventHandler.getEventModelForMember(getSelectedMemberID())) {
             ArrayList<String> s = new ArrayList<>();
 
-            BranchModel branchModel = dbHandler.branchHandler.getBranchInfoByBranchId(event.getBranch_id());
+            BranchModel branchModel = dbHandler.branchHandler.getBranchByBranchId(event.getBranch_id());
             s.add(event.getName());
             s.add(branchModel.getName());
             s.add(event.getDate().toString());
@@ -161,7 +161,7 @@ public class MemberWindow implements DisposableWindow {
         }
 
         registeredBranchesListModel.removeAllElements();
-        for (String branches : dbHandler.branchHandler.getBranchNamesByMemberId(getSelectedMemberID())) {
+        for (String branches : dbHandler.branchHandler.getBranchNameByMemberId(getSelectedMemberID())) {
             registeredBranchesListModel.addElement(branches);
         }
     }

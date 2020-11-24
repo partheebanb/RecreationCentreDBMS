@@ -1,8 +1,6 @@
 package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.BookableModel;
-import ca.ubc.cs304.model.BranchModel;
-import ca.ubc.cs304.model.EquipmentModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -106,7 +104,6 @@ public class BookableHandler {
             }
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
         }
         return eventToUses;
     }
@@ -126,22 +123,13 @@ public class BookableHandler {
 
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()) {
+            if (rs.next()) {
                 return rs.getInt("count(bookable.bookable_id)");
             }
 
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
         }
         return -1;
-    }
-
-    private void rollbackConnection() {
-        try  {
-            connection.rollback();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
     }
 }
