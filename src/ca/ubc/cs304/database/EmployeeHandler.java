@@ -19,6 +19,7 @@ public class EmployeeHandler {
         this.connection = connection;
     }
 
+    // Get all employee working on a specific branch
     public ArrayList<EmployeeModel> getEmployeeByBranch(int branchId) {
         ArrayList<EmployeeModel> employeeModels = new ArrayList<>();
         try {
@@ -51,17 +52,8 @@ public class EmployeeHandler {
             ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
         }
 
         return employeeModels;
-    }
-
-    private void rollbackConnection() {
-        try  {
-            connection.rollback();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
     }
 }

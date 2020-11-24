@@ -43,7 +43,41 @@ public class MemberHandler {
         return result;
     }
 
-    public ArrayList<MemberModel> getMemberInfoInBranch(int branch_id) {
+
+    public MemberModel getMemberWithMemberId(int mid) {
+
+        MemberModel result = null;
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
+                            "FROM MEMBER m " +
+                            "WHERE m.MEMBER_ID = ?");
+
+            ps.setInt(1, mid);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                MemberModel model = new MemberModel(
+                        rs.getInt("member_id"),
+                        rs.getDate("member_since"),
+                        rs.getDate("dob"),
+                        rs.getString("membership_type"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"));
+
+                result = model;
+            }
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result;
+    }
+
+    public ArrayList<MemberModel> getMemberSignedUpInBranch(int branch_id) {
         ArrayList<MemberModel> result = new ArrayList<>();
 
         try {
@@ -81,8 +115,39 @@ public class MemberHandler {
         return result;
     }
 
-    public String getMembershipPriceByType(String type) {
+    // DIVISION
+    // Get a list of all names of members who signed up in all branches
+    public ArrayList<String> getMemberNameInAllBranches() {
+        ArrayList<String> result = new ArrayList<>();
 
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT FIRST_NAME, LAST_NAME " +
+                            "FROM member m " +
+                            "WHERE NOT EXISTS " +
+                            "(SELECT b.branch_id " +
+                            "FROM branch b " +
+                            "WHERE NOT EXISTS " +
+                            "( SELECT r.branch_id " +
+                            "FROM SIGN_UP r " +
+                            "       WHERE r.branch_id = b.branch_id AND m.member_id = r.member_id))");
+
+            while (rs.next()) {
+                String fn = rs.getString("first_name") + " " + rs.getString("last_name");
+                result.add(fn);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public String getMembershipPriceByMembershipType(String type) {
         String returnString = null;
 
         try {
@@ -128,111 +193,6 @@ public class MemberHandler {
         }
     }
 
-    private void rollbackConnection() {
-        try {
-            connection.rollback();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-    }
-
-    //    division
-    public ArrayList<String> membersInAllBranches() {
-        ArrayList<String> result = new ArrayList<>();
-
-        try {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(
-                    "SELECT FIRST_NAME, LAST_NAME " +
-                            "FROM member m " +
-                            "WHERE NOT EXISTS " +
-                            "(SELECT b.branch_id " +
-                            "FROM branch b " +
-                            "WHERE NOT EXISTS " +
-                            "( SELECT r.branch_id " +
-                            "FROM SIGN_UP r " +
-                            "       WHERE r.branch_id = b.branch_id AND m.member_id = r.member_id))");
-
-            while (rs.next()) {
-                String fn = rs.getString("first_name") + " " + rs.getString("last_name");
-                result.add(fn);
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-
-        return result;
-    }
-
-    public ArrayList<MemberModel> selectMembersInProgram(int pid) {
-
-        ArrayList<MemberModel> result = new ArrayList<>();
-
-        try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * " +
-                            "FROM MEMBER m, ATTEND a " +
-                            "WHERE m.MEMBER_ID = a.MEMBER_ID and a.EVENT_ID = ?");
-
-            ps.setInt(1, pid);
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                MemberModel model = new MemberModel(
-                        rs.getInt("member_id"),
-                        rs.getDate("member_since"),
-                        rs.getDate("dob"),
-                        rs.getString("membership_type"),
-                        rs.getString("gender").charAt(0),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("email"));
-
-                result.add(model);
-            }
-
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-        return result;
-    }
-
-    public MemberModel selectMemberWithId(int mid) {
-
-        MemberModel result = null;
-
-        try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * " +
-                            "FROM MEMBER m " +
-                            "WHERE m.MEMBER_ID = ?");
-
-            ps.setInt(1, mid);
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                MemberModel model = new MemberModel(
-                        rs.getInt("member_id"),
-                        rs.getDate("member_since"),
-                        rs.getDate("dob"),
-                        rs.getString("membership_type"),
-                        rs.getString("gender").charAt(0),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("email"));
-
-                result = model;
-            }
-
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-        return result;
-    }
-
     public void deleteMember(int memberId) {
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM member WHERE member_id = ?");
@@ -249,6 +209,14 @@ public class MemberHandler {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
+        }
+    }
+
+    private void rollbackConnection() {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
     }
 }

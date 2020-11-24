@@ -35,81 +35,7 @@ public class EventHandler {
         return -1;
     }
 
-    public void insertEvent(DayEventModel model) {
-        try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO EVENT (EVENT_ID, NAME, EVENT_DATETIME, BRANCH_ID) " +
-                    "VALUES (?,?,?,?)");
-            ps.setInt(1, model.getEventId());
-            ps.setString(2, model.getName());
-            ps.setDate(3, model.getDate());
-            ps.setInt(4, model.getBranch_id());
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    public void insertUse(UseRelation useRelation) {
-        try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO USE (EVENT_ID, BOOKABLE_ID) " +
-                            "VALUES (?,?)");
-            ps.setInt(1, useRelation.getEventId());
-            ps.setInt(2, useRelation.getBookableId());
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    public void insertAttend(AttendRelation attendRelation) {
-        try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO ATTEND (EVENT_ID, MEMBER_ID) " +
-                            "VALUES (?,?)");
-            ps.setInt(1, attendRelation.getEventId());
-            ps.setInt(2, attendRelation.getMemberId());
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    public void insertHost(HostRelation hostRelation) {
-        try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO HOSTS (EVENT_ID, EMPLOYEE_ID) " +
-                            "VALUES (?,?)");
-            ps.setInt(1, hostRelation.getEventId());
-            ps.setInt(2, hostRelation.getEmployeeId());
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    public ArrayList<DayEventModel> getEventModelOnBranch(int branchId) {
+    public ArrayList<DayEventModel> getEventHostedOnBranch(int branchId) {
         ArrayList<DayEventModel> result = new ArrayList<>();
 
         try {
@@ -142,7 +68,7 @@ public class EventHandler {
         return result;
     }
 
-    public ArrayList<DayEventModel> getEventModelForMember(int memberId) {
+    public ArrayList<DayEventModel> getEventAttendedByMember(int memberId) {
         ArrayList<DayEventModel> result = new ArrayList<>();
 
         try {
@@ -246,7 +172,7 @@ public class EventHandler {
         return result;
     }
 
-    public String getEquipmentsUsedInEventString(int eventId) {
+    public String getEquipmentUsedInEventCSV(int eventId) {
         String result = "";
 
         try {
@@ -284,7 +210,7 @@ public class EventHandler {
         return result;
     }
 
-    public String getRoomsUsedInEventString(int eventId) {
+    public String getRoomUsedInEventCSV(int eventId) {
         String result = "";
 
         try {
@@ -318,8 +244,81 @@ public class EventHandler {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + "2 " + e.getMessage());
         }
-
         return result;
+    }
+
+    public void insertEvent(DayEventModel model) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO EVENT (EVENT_ID, NAME, EVENT_DATETIME, BRANCH_ID) " +
+                            "VALUES (?,?,?,?)");
+            ps.setInt(1, model.getEventId());
+            ps.setString(2, model.getName());
+            ps.setDate(3, model.getDate());
+            ps.setInt(4, model.getBranch_id());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void insertUse(UseRelation useRelation) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO USE (EVENT_ID, BOOKABLE_ID) " +
+                            "VALUES (?,?)");
+            ps.setInt(1, useRelation.getEventId());
+            ps.setInt(2, useRelation.getBookableId());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void insertAttend(AttendRelation attendRelation) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO ATTEND (EVENT_ID, MEMBER_ID) " +
+                            "VALUES (?,?)");
+            ps.setInt(1, attendRelation.getEventId());
+            ps.setInt(2, attendRelation.getMemberId());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void insertHost(HostRelation hostRelation) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO HOSTS (EVENT_ID, EMPLOYEE_ID) " +
+                            "VALUES (?,?)");
+            ps.setInt(1, hostRelation.getEventId());
+            ps.setInt(2, hostRelation.getEmployeeId());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
     }
 
     private void rollbackConnection() {

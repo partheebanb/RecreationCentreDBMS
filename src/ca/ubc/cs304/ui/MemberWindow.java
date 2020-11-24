@@ -88,7 +88,7 @@ public class MemberWindow implements DisposableWindow {
             public void actionPerformed(ActionEvent e) {
                 int reply = JOptionPane.showConfirmDialog(null, "Confirm deleting member " + memberComboBox.getSelectedItem().toString(), "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 if (reply == JOptionPane.YES_OPTION) {
-                    // TODO: DELETE USER HERE
+                    dbHandler.memberHandler.deleteMember(getSelectedMemberID());
                 }
             }
         });
@@ -121,7 +121,7 @@ public class MemberWindow implements DisposableWindow {
         memberDob.setText(memberModel.getDateOfBirth().toString());
         memberGender.setText(memberModel.getGender());
 
-        membershipCost.setText(dbHandler.memberHandler.getMembershipPriceByType(memberModel.getMembershipType()));
+        membershipCost.setText(dbHandler.memberHandler.getMembershipPriceByMembershipType(memberModel.getMembershipType()));
 
         refreshList();
     }
@@ -147,7 +147,7 @@ public class MemberWindow implements DisposableWindow {
         }
 
         removeAllElements(eventTableModel);
-        for (DayEventModel event : dbHandler.eventHandler.getEventModelForMember(getSelectedMemberID())) {
+        for (DayEventModel event : dbHandler.eventHandler.getEventAttendedByMember(getSelectedMemberID())) {
             ArrayList<String> s = new ArrayList<>();
 
             BranchModel branchModel = dbHandler.branchHandler.getBranchByBranchId(event.getBranch_id());

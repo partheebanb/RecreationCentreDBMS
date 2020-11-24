@@ -113,7 +113,7 @@ public class MainWindow {
         for (BookingModel booking : dbHandler.bookingHandler.getBookingInBranch(getSelectedBranchId())) {
             ArrayList<String> s = new ArrayList<>();
 
-            MemberModel member = dbHandler.memberHandler.selectMemberWithId(booking.getMemberId());
+            MemberModel member = dbHandler.memberHandler.getMemberWithMemberId(booking.getMemberId());
 
             s.add(member.getFirstName() + " " + member.getLastName());
             s.add(booking.getDate().toString());
@@ -129,15 +129,15 @@ public class MainWindow {
         }
 
         removeAllElements(eventTableModel);
-        for (DayEventModel event : dbHandler.eventHandler.getEventModelOnBranch(getSelectedBranchId())) {
+        for (DayEventModel event : dbHandler.eventHandler.getEventHostedOnBranch(getSelectedBranchId())) {
             ArrayList<String> s = new ArrayList<>();
             s.add(event.getName());
             s.add(event.getDate().toString());
             s.add(event.getTime().toString());
             s.add(dbHandler.eventHandler.getEmployeeManagingEventString(event.getEventId()));
             s.add(dbHandler.eventHandler.getMemberAttendingEvent(event.getEventId()));
-            s.add(dbHandler.eventHandler.getEquipmentsUsedInEventString(event.getEventId()));
-            s.add(dbHandler.eventHandler.getRoomsUsedInEventString(event.getEventId()));
+            s.add(dbHandler.eventHandler.getEquipmentUsedInEventCSV(event.getEventId()));
+            s.add(dbHandler.eventHandler.getRoomUsedInEventCSV(event.getEventId()));
 
             eventTableModel.addRow(s.toArray());
         }

@@ -54,7 +54,7 @@ public class ComplexQueriesWindow implements DisposableWindow {
     public void setupMemberDivisionList() {
         DefaultListModel defaultListModel = new DefaultListModel();
         memberSignUpAll.setModel(defaultListModel);
-        for (String s : dbHandler.memberHandler.membersInAllBranches()) {
+        for (String s : dbHandler.memberHandler.getMemberNameInAllBranches()) {
             defaultListModel.addElement(s);
         }
     }

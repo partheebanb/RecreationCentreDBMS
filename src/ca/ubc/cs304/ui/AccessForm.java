@@ -64,13 +64,13 @@ public class AccessForm implements DisposableWindow {
 
     // Let user choose the member from a choice dialog
     private void setupMemberComboBox() {
-        for (MemberModel memberModel: dbHandler.memberHandler.getMemberInfoInBranch(branchId)) {
+        for (MemberModel memberModel: dbHandler.memberHandler.getMemberSignedUpInBranch(branchId)) {
             memberComboBox.addItem(memberModel);
         }
     }
 
     private void setupAreaComboBox() {
-        for (PublicAreaModel publicAreaModel : dbHandler.publicAreaHandler.getPublicAreaInfoInBranch(branchId)) {
+        for (PublicAreaModel publicAreaModel : dbHandler.publicAreaHandler.getPublicAreaInBranch(branchId)) {
             areaComboBox.addItem(publicAreaModel);
         }
     }

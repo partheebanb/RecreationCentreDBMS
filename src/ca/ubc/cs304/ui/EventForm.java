@@ -113,7 +113,7 @@ public class EventForm implements DisposableWindow {
 
     // Let user choose the member from a choice dialog
     private void setupMemberComboBox() {
-        for (MemberModel memberModel: dbHandler.memberHandler.getMemberInfoInBranch(branchId)) {
+        for (MemberModel memberModel: dbHandler.memberHandler.getMemberSignedUpInBranch(branchId)) {
             memberComboBox.addItem(memberModel);
         }
         addMemberButton.addActionListener(new ActionListener() {

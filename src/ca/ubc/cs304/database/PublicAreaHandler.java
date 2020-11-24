@@ -17,7 +17,7 @@ public class PublicAreaHandler {
         this.connection = connection;
     }
 
-    public ArrayList<PublicAreaModel> getPublicAreaInfoInBranch(int branch_id) {
+    public ArrayList<PublicAreaModel> getPublicAreaInBranch(int branch_id) {
         ArrayList<PublicAreaModel> result = new ArrayList<>();
 
         try {
@@ -45,51 +45,5 @@ public class PublicAreaHandler {
         }
 
         return result;
-    }
-
-    public void deletePublicArea(int areaId) {
-        try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM public_area WHERE area_id = ?");
-            ps.setInt(1, areaId);
-
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                System.out.println(WARNING_TAG + " PublicArea " + areaId + " does not exist!");
-            }
-
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    public void insertPublicArea(PublicAreaModel model) {
-        try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO public_area VALUES (?,?,?,?,?)");
-            ps.setInt(1, model.getAreaId());
-            ps.setString(2, model.getName());
-            ps.setBoolean(3, model.isOutdoor());
-            ps.setInt(4, model.getBranchId());
-
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    private void rollbackConnection() {
-        try  {
-            connection.rollback();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
     }
 }

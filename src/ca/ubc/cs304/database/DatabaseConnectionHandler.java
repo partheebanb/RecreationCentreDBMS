@@ -14,18 +14,17 @@ public class DatabaseConnectionHandler {
 	private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
 	private static final String EXCEPTION_TAG = "[EXCEPTION]";
 
-    private Connection connection = null;
+    private Connection connection;
 
 	// These are the handlers for each Models
 	// We chose to modulate for organization sake
-	public PublicAreaHandler publicAreaHandler = null;
-	public BookableHandler bookableHandler = null;
-	public MemberHandler memberHandler = null;
-	public AccessHandler accessHandler = null;
-	public BranchHandler branchHandler = null;
-	public BookingHandler bookingHandler = null;
-	public ReserveHandler reserveHandler = null;
-	public ProgramHandler programHandler;
+	public PublicAreaHandler publicAreaHandler;
+	public BookableHandler bookableHandler;
+	public MemberHandler memberHandler;
+	public AccessHandler accessHandler;
+	public BranchHandler branchHandler;
+	public BookingHandler bookingHandler;
+	public ReserveHandler reserveHandler;
 	public EventHandler eventHandler;
 	public EmployeeHandler employeeHandler;
 
@@ -68,7 +67,6 @@ public class DatabaseConnectionHandler {
 			branchHandler = new BranchHandler(connection);
 			bookingHandler = new BookingHandler(connection);
 			reserveHandler = new ReserveHandler(connection);
-			programHandler = new ProgramHandler(connection);
 			eventHandler = new EventHandler(connection);
 			employeeHandler = new EmployeeHandler(connection);
 	
