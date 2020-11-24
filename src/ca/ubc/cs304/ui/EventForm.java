@@ -61,8 +61,10 @@ public class EventForm implements DisposableWindow {
         employeeList.setModel(employeeListModel);
     }
 
-    // When enterForm is pressed, we submit the new booking in the SQL statement
-    // We also add any bookables that the user book into this booking
+    // When enterForm is pressed, we submit the new event in the SQL statement
+    // We also add any bookables that the user book into this event
+    // We also add any employee that the user add into this event
+    // We also add all the member attending to this event
     private void setupEnterButton() {
         enterForm.addActionListener(new ActionListener() {
             @Override
@@ -125,6 +127,7 @@ public class EventForm implements DisposableWindow {
         });
     }
 
+    // Let user choose the employee from a choice dialog
     private void setupEmployeeComboBox() {
         for (EmployeeModel employeeModel : dbHandler.employeeHandler.getEmployeeByBranch(branchId)) {
             employeeComboBox.addItem(employeeModel);
