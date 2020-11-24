@@ -128,7 +128,7 @@ public class MemberWindow implements DisposableWindow {
 
     private void refreshList() {
         removeAllElements(accessTableModel);
-        for (ArrayList<String> access : dbHandler.accessHandler.getAccessInMemberString(getSelectedMemberID())) {
+        for (ArrayList<String> access : dbHandler.accessHandler.getAccessDataForMember(getSelectedMemberID())) {
             accessTableModel.addRow(access.toArray());
         }
 

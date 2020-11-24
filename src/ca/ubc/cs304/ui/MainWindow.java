@@ -124,7 +124,7 @@ public class MainWindow {
         }
 
         removeAllElements(accessTableModel);
-        for (ArrayList<String> access : dbHandler.accessHandler.getAccessInBranchString(getSelectedBranchId())) {
+        for (ArrayList<String> access : dbHandler.accessHandler.getAccessDataInBranch(getSelectedBranchId())) {
             accessTableModel.addRow(access.toArray());
         }
 

@@ -18,44 +18,9 @@ public class AccessHandler {
         this.connection = connection;
     }
 
-    // AGGREGATION with GROUP BY, HAVING
-    // Find users that have accessed public areas before and their # of accesses
-    public Map<MemberModel, Integer> avgAccessGroupedByDateHaving(int leastAccess) {
-        Map<MemberModel, Integer> resultMap = new HashMap<>();
-
-        try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * " +
-                            "FROM MEMBER M JOIN ( " +
-                            "    SELECT a.MEMBER_ID, COUNT(a.MEMBER_ID) " +
-                            "    FROM \"ACCESS\" a " +
-                            "    GROUP BY a.MEMBER_ID " +
-                            "    HAVING COUNT(a.MEMBER_ID) >= ? " +
-                            ") G on M.MEMBER_ID = G.MEMBER_ID");
-
-            ps.setInt(1, leastAccess);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                MemberModel model = new MemberModel(rs.getInt("member_id"),
-                        rs.getDate("member_since"),
-                        rs.getDate("dob"),
-                        rs.getString("membership_type"),
-                        rs.getString("gender").charAt(0),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("email"));
-
-                resultMap.put(model, rs.getInt("count(a.member_id)"));
-            }
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-        return resultMap;
-    }
-
-    public ArrayList<ArrayList<String>> getAccessInBranchString(int branch_id) {
+    // Get the accesses for a specific branch.
+    // Format the data based on how we will display it in the tables.
+    public ArrayList<ArrayList<String>> getAccessDataInBranch(int branch_id) {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
 
         try {
@@ -90,7 +55,9 @@ public class AccessHandler {
         return result;
     }
 
-    public ArrayList<ArrayList<String>> getAccessInMemberString(int branch_id) {
+    // Get the accesses for a specific member.
+    // Format the data based on how we will display it in the tables.
+    public ArrayList<ArrayList<String>> getAccessDataForMember(int memberId) {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
 
         try {
@@ -102,7 +69,7 @@ public class AccessHandler {
                         "  AND p.AREA_ID = a.AREA_ID " +
                         "  AND a.MEMBER_ID = ?");
 
-            ps.setInt(1, branch_id);
+            ps.setInt(1, memberId);
 
             ResultSet rs = ps.executeQuery();
 
@@ -142,6 +109,43 @@ public class AccessHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+    }
+
+    // AGGREGATION with GROUP BY, HAVING
+    // Find users that have accessed public areas before and their # of accesses
+    public Map<MemberModel, Integer> avgAccessGroupedByDateHaving(int leastAccess) {
+        Map<MemberModel, Integer> resultMap = new HashMap<>();
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
+                            "FROM MEMBER M JOIN ( " +
+                            "    SELECT a.MEMBER_ID, COUNT(a.MEMBER_ID) " +
+                            "    FROM \"ACCESS\" a " +
+                            "    GROUP BY a.MEMBER_ID " +
+                            "    HAVING COUNT(a.MEMBER_ID) >= ? " +
+                            ") G on M.MEMBER_ID = G.MEMBER_ID");
+
+            ps.setInt(1, leastAccess);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                MemberModel model = new MemberModel(rs.getInt("member_id"),
+                        rs.getDate("member_since"),
+                        rs.getDate("dob"),
+                        rs.getString("membership_type"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"));
+
+                resultMap.put(model, rs.getInt("count(a.member_id)"));
+            }
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return resultMap;
     }
 
     private void rollbackConnection() {

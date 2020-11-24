@@ -67,7 +67,7 @@ public class ComplexQueriesWindow implements DisposableWindow {
         model.addColumn("Name");
         model.addColumn("Count");
 
-        HashMap<String, Integer> map = dbHandler.bookableHandler.avgBookableGroupedByEvents();
+        HashMap<String, Integer> map = dbHandler.bookableHandler.bookableCountGroupedByEvents();
         for (String s : map.keySet().stream()
                 .sorted()
                 .collect(Collectors.toList())) {

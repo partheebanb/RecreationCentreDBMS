@@ -12,12 +12,13 @@ public class BookableHandler {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
 
-    private Connection connection = null;
+    private Connection connection;
 
     public BookableHandler(Connection connection) {
         this.connection = connection;
     }
 
+    // Get the BookableModel of all the equipments in a branch
     public ArrayList<BookableModel> getEquipmentInfoInBranch(int branch_id) {
         ArrayList<BookableModel> result = new ArrayList<>();
 
@@ -51,6 +52,7 @@ public class BookableHandler {
         return result;
     }
 
+    // Get the BookableModel of all the rooms in a branch
     public ArrayList<BookableModel> getRoomInfoInBranch(int branch_id) {
         ArrayList<BookableModel> result = new ArrayList<>();
 
@@ -84,47 +86,9 @@ public class BookableHandler {
         return result;
     }
 
-    public void insertEquipment(EquipmentModel model) {
-        insertToBookable(model);
-        insertToEquipment(model);
-    }
-
-    private void insertToBookable(EquipmentModel model) {
-        // for bookable table
-        PreparedStatement psb = null;
-        try {
-            psb = connection.prepareStatement("INSERT INTO bookable VALUES (?,?,?,?)");
-            psb.setInt(1, model.getBookableId());
-            psb.setString(2, model.getType());
-            psb.setString(3, model.getName());
-            psb.setInt(4, model.getBranchId());
-            psb.executeUpdate();
-            connection.commit();
-            psb.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
-    private void insertToEquipment(EquipmentModel model) {
-        // for equipment table
-        try {
-            PreparedStatement pse = connection.prepareStatement("INSERT INTO equipment VALUES (?,?,?)");
-            pse.setInt(1, model.getBookableId());
-            pse.setDate(2, model.getPurchased());
-            pse.setDate(3, model.getLastFixed());
-            pse.executeUpdate();
-            connection.commit();
-            pse.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-
     // AGGREGATION with GROUP BY
-    public HashMap<String, Integer> avgBookableGroupedByEvents() {
+    // Find the number of bookable every event books
+    public HashMap<String, Integer> bookableCountGroupedByEvents() {
         HashMap<String, Integer> eventToUses = new HashMap<>();
         try {
             PreparedStatement ps = connection.prepareStatement(
@@ -147,8 +111,8 @@ public class BookableHandler {
         return eventToUses;
     }
 
-    // nested aggregation
-    // count the number of bookables grouped by events
+    // NESTED AGGREGATION
+    // count the number of bookable grouped by events
     // return only the result with the earliest event date
     public int countOfBookablesUsedInTheLatestEventDate() {
         try {
@@ -172,8 +136,6 @@ public class BookableHandler {
         }
         return -1;
     }
-
-
 
     private void rollbackConnection() {
         try  {
