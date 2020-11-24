@@ -77,8 +77,6 @@ public class MainWindow {
         eventTableModel.addColumn("Event's Equipments");
         eventTableModel.addColumn("Event's Rooms");
 
-        refreshTables();
-
         // Set what all the buttons do
         // We add the childrens to the children panel so we can kill it easily (less clutter)
         addBooking.addActionListener(e ->
@@ -148,9 +146,11 @@ public class MainWindow {
     // Let the user choose which branch it want to operate on
     // This data will be used to generate the lists and when creating bookings/accesses
     private void setupBranchComboBox() {
-        for (BranchModel branchModel : dbHandler.branchHandler.getBranchInfo()) {
-            branchComboBox.addItem(branchModel);
-        }
+        dbHandler.branchHandler.getBranchInfo()
+            .stream()
+            .sorted()
+            .forEach(branchModel -> branchComboBox.addItem(branchModel));
+
         branchComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

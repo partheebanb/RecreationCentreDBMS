@@ -2,7 +2,7 @@ package ca.ubc.cs304.model;
 
 import java.sql.Date;
 
-public class MemberModel {
+public class MemberModel implements Comparable {
     private final int id;
     private final Date registrationDate;
     private final Date dateOfBirth;
@@ -66,5 +66,13 @@ public class MemberModel {
     @Override
     public String toString() {
         return getFirstName() + " " + getLastName();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof MemberModel) {
+            return Integer.compare(this.id, ((MemberModel) o).id);
+        }
+        return 0;
     }
 }
