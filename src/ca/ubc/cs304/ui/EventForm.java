@@ -1,35 +1,38 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
+import ca.ubc.cs304.database.EventHandler;
 import ca.ubc.cs304.helper.DateUtils;
-import ca.ubc.cs304.model.BookableModel;
-import ca.ubc.cs304.model.BookingModel;
-import ca.ubc.cs304.model.MemberModel;
-import ca.ubc.cs304.model.ReserveRelation;
+import ca.ubc.cs304.model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Date;
-import java.util.ArrayList;
 
-public class BookingForm implements DisposableWindow {
-    private JButton enterForm;
+public class EventForm implements DisposableWindow {
+    private JList memberList;
     private JComboBox memberComboBox;
-    public JPanel jpanel;
+    private JButton addMemberButton;
+    private JTextField eventName;
     private JSpinner dateSpinner;
     private JComboBox equipOrRoom;
+    private JList bookableList;
+    private JButton enterForm;
     private JComboBox bookableChoice;
+
+
     private JButton addBookable;
     private int branchId;
     private final DatabaseConnectionHandler dbHandler;
 
-    private ArrayList<DisposableWindow> childrenPanel = new ArrayList<>();
+    private DefaultListModel<BookableModel> bookableListModel = new DefaultListModel<>();
+    private DefaultListModel<MemberModel> memberListModel = new DefaultListModel<>();
 
-    private DefaultListModel<BookableModel> model;
-    private JList bookableList;
+    private JPanel jpanel;
 
-    BookingForm(DatabaseConnectionHandler dbHandler, int branchId) {
+    EventForm(DatabaseConnectionHandler dbHandler, int branchId) {
         this.dbHandler = dbHandler;
         this.branchId = branchId;
 
@@ -49,13 +52,8 @@ public class BookingForm implements DisposableWindow {
         setupMemberComboBox();
         setupAddingBookable();
 
-        // We don't want the windows to be too cluttered. So if we press the main window, we also kill all the children windows
-        jpanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                closeAllChildren();
-            }
-        });
+        memberList.setModel(memberListModel);
+        bookableList.setModel(bookableListModel);
     }
 
     // When enterForm is pressed, we submit the new booking in the SQL statement
@@ -64,19 +62,27 @@ public class BookingForm implements DisposableWindow {
         enterForm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int bookingNumber = dbHandler.bookingHandler.getNextId();
-                BookingModel bookingModel = new BookingModel(bookingNumber,
+                int eventId = dbHandler.eventHandler.getNextId();
+                DayEventModel eventModel = new DayEventModel(
+                        eventId,
+                        eventName.getText(),
                         DateUtils.normalize((java.util.Date) dateSpinner.getValue()),
-                        ((MemberModel) memberComboBox.getSelectedItem()).getId(),
                         branchId);
 
-                dbHandler.bookingHandler.insertBooking(bookingModel);
+                dbHandler.eventHandler.insertEvent(eventModel);
 
-                for (int i = 0; i < model.getSize(); i++) {
-                    BookableModel bookableModel = model.getElementAt(i);
+                for (int i = 0; i < bookableListModel.getSize(); i++) {
+                    BookableModel bookableModel = bookableListModel.getElementAt(i);
 
-                    ReserveRelation reserveRelation = new ReserveRelation(bookingNumber, bookableModel.getBookableId());
-                    dbHandler.reserveHandler.insertReserve(reserveRelation);
+                    UseRelation useRelation = new UseRelation(eventId, bookableModel.getBookableId());
+                    dbHandler.eventHandler.insertUse(useRelation);
+                }
+
+                for (int i = 0; i < memberListModel.getSize(); i++) {
+                    MemberModel memberModel = memberListModel.getElementAt(i);
+
+                    AttendRelation attendRelation = new AttendRelation(memberModel.getId(), eventId);
+                    dbHandler.eventHandler.insertAttend(attendRelation);
                 }
 
                 close();
@@ -96,6 +102,15 @@ public class BookingForm implements DisposableWindow {
         for (MemberModel memberModel: dbHandler.memberHandler.getMemberInfoInBranch(branchId)) {
             memberComboBox.addItem(memberModel);
         }
+        addMemberButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (memberComboBox.getSelectedItem() != null) {
+                    memberListModel.addElement((MemberModel) memberComboBox.getSelectedItem());
+                    memberComboBox.removeItemAt(memberComboBox.getSelectedIndex());
+                }
+            }
+        });
     }
 
     // Let user add a bookable to this booking
@@ -111,8 +126,10 @@ public class BookingForm implements DisposableWindow {
         addBookable.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.addElement((BookableModel) bookableChoice.getSelectedItem());
-                refreshBookableList();
+                if (bookableChoice.getSelectedItem() != null) {
+                    bookableListModel.addElement((BookableModel) bookableChoice.getSelectedItem());
+                    refreshBookableList();
+                }
             }
         });
     }
@@ -122,12 +139,12 @@ public class BookingForm implements DisposableWindow {
         bookableChoice.removeAllItems();
         if (equipOrRoom.getSelectedIndex() == 0) {
             for (BookableModel bookableModel : dbHandler.bookableHandler.getEquipmentInfoInBranch(branchId)) {
-                if (!model.contains(bookableModel))
+                if (!bookableListModel.contains(bookableModel))
                     bookableChoice.addItem(bookableModel);
             }
         } else {
             for (BookableModel bookableModel : dbHandler.bookableHandler.getRoomInfoInBranch(branchId)) {
-                if (!model.contains(bookableModel))
+                if (!bookableListModel.contains(bookableModel))
                     bookableChoice.addItem(bookableModel);
             }
         }
@@ -135,8 +152,6 @@ public class BookingForm implements DisposableWindow {
 
     private void createUIComponents() {
         dateSpinner = new JSpinner(new SpinnerDateModel());
-        model = new DefaultListModel<>();
-        bookableList = new JList(model);
     }
 
     /*
@@ -146,14 +161,7 @@ public class BookingForm implements DisposableWindow {
      * It closes all the childrens whenever the parent window is clicked so there won't be too many
      * windows running around
      */
-    private void closeAllChildren() {
-        for (DisposableWindow disposableWindow : childrenPanel) {
-            disposableWindow.close();
-        }
-    }
-
     public void close() {
-        closeAllChildren();
         SwingUtilities.getWindowAncestor(jpanel).dispose();
     }
 }

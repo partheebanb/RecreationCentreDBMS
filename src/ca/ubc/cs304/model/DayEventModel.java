@@ -20,6 +20,15 @@ public class DayEventModel {
 		this.branch_id = branch_id;
 	}
 
+	public DayEventModel(int eventId, String name, Date date, int branch_id) {
+		this.eventId = eventId;
+		this.name = name;
+		this.date = date;
+		this.time = null;
+		this.branch_id = branch_id;
+	}
+
+
 	public int getEventId() {
 		return eventId;
 	}

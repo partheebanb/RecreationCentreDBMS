@@ -165,7 +165,9 @@
         <children>
           <component id="1601a" class="javax.swing.JTable" binding="bookingTable">
             <constraints/>
-            <properties/>
+            <properties>
+              <autoCreateRowSorter value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -194,7 +196,9 @@
         <children>
           <component id="7ff32" class="javax.swing.JTable" binding="eventTable">
             <constraints/>
-            <properties/>
+            <properties>
+              <autoCreateRowSorter value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -207,7 +211,9 @@
         <children>
           <component id="736c8" class="javax.swing.JTable" binding="accessTable">
             <constraints/>
-            <properties/>
+            <properties>
+              <autoCreateRowSorter value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>

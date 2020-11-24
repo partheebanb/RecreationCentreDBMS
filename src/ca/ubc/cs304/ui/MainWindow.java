@@ -7,6 +7,8 @@ import ca.ubc.cs304.model.DayEventModel;
 import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -32,6 +34,8 @@ public class MainWindow {
     private TableModel eventTableModel = new TableModel();
 
     public MainWindow(DatabaseConnectionHandler dbHandler) {
+
+
         this.dbHandler = dbHandler;
 
         JFrame frame = new JFrame("Main Window");
@@ -70,6 +74,8 @@ public class MainWindow {
         eventTableModel.addColumn("Event Time");
         eventTableModel.addColumn("Event's Hosts");
         eventTableModel.addColumn("Event's Attendee");
+        eventTableModel.addColumn("Event's Equipments");
+        eventTableModel.addColumn("Event's Rooms");
 
         refreshTables();
 
@@ -80,6 +86,9 @@ public class MainWindow {
 
         addAccessButton.addActionListener(e ->
                 childrenPanel.add(new AccessForm(dbHandler, getSelectedBranchId())));
+
+        addAnEventButton.addActionListener(e ->
+                childrenPanel.add(new EventForm(dbHandler, getSelectedBranchId())));
 
         viewMembersButton.addActionListener(e ->
                 childrenPanel.add(new MemberWindow(dbHandler)));
@@ -129,6 +138,8 @@ public class MainWindow {
             s.add(event.getTime().toString());
             s.add(dbHandler.eventHandler.getEmployeeManagingEventString(event.getEventId()));
             s.add(dbHandler.eventHandler.getMemberAttendingEvent(event.getEventId()));
+            s.add(dbHandler.eventHandler.getEquipmentsUsedInEventString(event.getEventId()));
+            s.add(dbHandler.eventHandler.getRoomsUsedInEventString(event.getEventId()));
 
             eventTableModel.addRow(s.toArray());
         }
@@ -169,5 +180,19 @@ public class MainWindow {
         for(DisposableWindow disposableWindow : childrenPanel) {
             disposableWindow.close();
         }
+    }
+
+    private void createUIComponents() {
+        eventTable = new JTable(){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                int rendererWidth = component.getPreferredSize().width;
+                TableColumn tableColumn = getColumnModel().getColumn(column);
+                tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+                return component;
+            }
+        };
+        eventTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     }
 }

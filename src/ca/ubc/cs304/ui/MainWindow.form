@@ -59,7 +59,9 @@
         <children>
           <component id="e8ec2" class="javax.swing.JTable" binding="bookingTable">
             <constraints/>
-            <properties/>
+            <properties>
+              <autoCreateRowSorter value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -72,7 +74,9 @@
         <children>
           <component id="cd288" class="javax.swing.JTable" binding="accessTable">
             <constraints/>
-            <properties/>
+            <properties>
+              <autoCreateRowSorter value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -91,9 +95,13 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="3566f" class="javax.swing.JTable" binding="eventTable">
+          <component id="3566f" class="javax.swing.JTable" binding="eventTable" custom-create="true">
             <constraints/>
-            <properties/>
+            <properties>
+              <autoCreateColumnsFromModel value="true"/>
+              <autoCreateRowSorter value="true"/>
+              <autoResizeMode value="4"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
