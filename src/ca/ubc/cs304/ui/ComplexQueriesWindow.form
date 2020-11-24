@@ -115,7 +115,9 @@
             <children>
               <component id="13429" class="javax.swing.JTable" binding="eventBookableCountTable">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <autoCreateRowSorter value="true"/>
+                </properties>
               </component>
             </children>
           </scrollpane>
