@@ -26,10 +26,10 @@ public class MainWindow {
 
     private JTable bookingTable;
     private JTable accessTable;
-    private JTable eventsTable;
+    private JTable eventTable;
     private TableModel bookingTableModel = new TableModel();
     private TableModel accessTableModel = new TableModel();
-    private TableModel eventsTableModel = new TableModel();
+    private TableModel eventTableModel = new TableModel();
 
     public MainWindow(DatabaseConnectionHandler dbHandler) {
         this.dbHandler = dbHandler;
@@ -63,13 +63,13 @@ public class MainWindow {
         accessTableModel.addColumn("Access Date");
         accessTableModel.addColumn("Access Time");
 
-        eventsTable.setModel(eventsTableModel);
+        eventTable.setModel(eventTableModel);
 
-        eventsTableModel.addColumn("Event Name");
-        eventsTableModel.addColumn("Event Date");
-        eventsTableModel.addColumn("Event Time");
-        eventsTableModel.addColumn("Event's Hosts");
-        eventsTableModel.addColumn("Event's Attendee");
+        eventTableModel.addColumn("Event Name");
+        eventTableModel.addColumn("Event Date");
+        eventTableModel.addColumn("Event Time");
+        eventTableModel.addColumn("Event's Hosts");
+        eventTableModel.addColumn("Event's Attendee");
 
         refreshTables();
 
@@ -121,7 +121,7 @@ public class MainWindow {
             accessTableModel.addRow(access.toArray());
         }
 
-        removeAllElements(eventsTableModel);
+        removeAllElements(eventTableModel);
         for (DayEventModel event : dbHandler.eventHandler.getEventModelOnBranch(getSelectedBranchId())) {
             ArrayList<String> s = new ArrayList<>();
             s.add(event.getName());
@@ -130,7 +130,7 @@ public class MainWindow {
             s.add(dbHandler.eventHandler.getEmployeeManagingEventString(event.getEventId()));
             s.add(dbHandler.eventHandler.getMemberAttendingEvent(event.getEventId()));
 
-            eventsTableModel.addRow(s.toArray());
+            eventTableModel.addRow(s.toArray());
         }
     }
 

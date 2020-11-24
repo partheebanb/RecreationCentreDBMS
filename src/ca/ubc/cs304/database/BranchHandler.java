@@ -75,6 +75,32 @@ public class BranchHandler {
         return result;
     }
 
+    public BranchModel getBranchInfoByBranchId(int branchId) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
+                        "FROM BRANCH " +
+                        "WHERE BRANCH_ID = ?");
+
+            ps.setInt(1, branchId);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                BranchModel model = new BranchModel(rs.getInt("branch_id"),
+                        rs.getString("branch_name"),
+                        rs.getString("branch_address"));
+                return model;
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return null;
+    }
+
     public ArrayList<String> getBranchNamesByMemberId(int memberId) {
         ArrayList<String> result = new ArrayList<String>();
 
@@ -93,6 +119,7 @@ public class BranchHandler {
             }
 
             rs.close();
+            ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }

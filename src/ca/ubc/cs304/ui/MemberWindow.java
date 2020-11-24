@@ -1,22 +1,18 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
+import ca.ubc.cs304.model.BookingModel;
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.DayEventModel;
 import ca.ubc.cs304.model.MemberModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class MemberWindow implements DisposableWindow {
-    private JList programList;
-    private JList bookingList;
-    private JList accessList;
-    private JLabel Accesses;
     private JTextField memberEmail;
     private JButton cancelButton;
     private JButton modifyButton;
@@ -25,17 +21,20 @@ public class MemberWindow implements DisposableWindow {
     private JButton deleteUser;
     private JLabel membershipType;
     private JLabel membershipCost;
-    private JLabel gender;
+    private JLabel memberGender;
     private JLabel memberDob;
     private JLabel memberSignUpDate;
     private JList registeredBranchesList;
+    private JTable eventTable;
+    private JTable bookingTable;
+    private JTable accessTable;
 
     private DatabaseConnectionHandler dbHandler;
 
-    private DefaultListModel<String> accessListModel;
-    private DefaultListModel<String> bookingListModel;
-    private DefaultListModel<String> programListModel;
-    private DefaultListModel<String> registeredBranchesListModel;
+    private final TableModel eventTableModel = new TableModel();
+    private final TableModel bookingTableModel = new TableModel();
+    private final TableModel accessTableModel = new TableModel();
+    private final DefaultListModel<String> registeredBranchesListModel = new DefaultListModel<>();
 
     MemberWindow(DatabaseConnectionHandler dbHandler) {
         this.dbHandler = dbHandler;
@@ -51,15 +50,29 @@ public class MemberWindow implements DisposableWindow {
         frame.setSize(screenSize.width * 2 / 3, screenSize.height * 2 / 3);
 
         // Set up the listviews
-        accessListModel = new DefaultListModel<>();
-        bookingListModel = new DefaultListModel<>();
-        programListModel = new DefaultListModel<>();
-        registeredBranchesListModel = new DefaultListModel<>();
-
-        accessList.setModel(accessListModel);
-        bookingList.setModel(bookingListModel);
-        programList.setModel(programListModel);
         registeredBranchesList.setModel(registeredBranchesListModel);
+
+        accessTable.setModel(accessTableModel);
+
+        accessTableModel.addColumn("Branch Name");
+        accessTableModel.addColumn("Area Name");
+        accessTableModel.addColumn("Access Date");
+        accessTableModel.addColumn("Access Time");
+
+        bookingTable.setModel(bookingTableModel);
+
+        bookingTableModel.addColumn("Branch Name");
+        bookingTableModel.addColumn("Booking Date");
+        bookingTableModel.addColumn("Booking Time");
+        bookingTableModel.addColumn("Booking Reserves");
+
+        eventTable.setModel(eventTableModel);
+
+        eventTableModel.addColumn("Event Name");
+        eventTableModel.addColumn("Branch Name");
+        eventTableModel.addColumn("Event Date");
+        eventTableModel.addColumn("Event Time");
+        eventTableModel.addColumn("Event's Hosts");
 
         setupMemberComboBox();
         setupEmailButtons();
@@ -106,6 +119,7 @@ public class MemberWindow implements DisposableWindow {
         membershipType.setText(memberModel.getMembershipType());
         memberSignUpDate.setText(memberModel.getRegistrationDate().toString());
         memberDob.setText(memberModel.getDateOfBirth().toString());
+        memberGender.setText(memberModel.getGender());
 
         membershipCost.setText(dbHandler.memberHandler.getMembershipPriceByType(memberModel.getMembershipType()));
 
@@ -113,19 +127,37 @@ public class MemberWindow implements DisposableWindow {
     }
 
     private void refreshList() {
-        accessListModel.removeAllElements();
-        //for (String access : dbHandler.accessHandler.getAccessInBranchString(getSelectedMemberID())) {
-        //    accessListModel.addElement(access);
-        //}
-
-        bookingListModel.removeAllElements();
-        for (String booking : dbHandler.bookingHandler.getBookingByMemberId(getSelectedMemberID())) {
-            bookingListModel.addElement(booking);
+        removeAllElements(accessTableModel);
+        for (ArrayList<String> access : dbHandler.accessHandler.getAccessInMemberString(getSelectedMemberID())) {
+            accessTableModel.addRow(access.toArray());
         }
 
-        programListModel.removeAllElements();
-        for (String program : dbHandler.programHandler.getProgramByMemberID(getSelectedMemberID())) {
-            programListModel.addElement(program);
+        removeAllElements(bookingTableModel);
+        for (BookingModel booking : dbHandler.bookingHandler.getBookingByMemberId(getSelectedMemberID())) {
+            ArrayList<String> s = new ArrayList<>();
+
+            BranchModel branchModel = dbHandler.branchHandler.getBranchInfoByBranchId(booking.getBranchId());
+
+            s.add(branchModel.getName());
+            s.add(booking.getDate().toString());
+            s.add(booking.getTime().toString());
+            s.add(dbHandler.bookingHandler.getBookablesByBookingString(booking.getId()));
+
+            bookingTableModel.addRow(s.toArray());
+        }
+
+        removeAllElements(eventTableModel);
+        for (DayEventModel event : dbHandler.eventHandler.getEventModelForMember(getSelectedMemberID())) {
+            ArrayList<String> s = new ArrayList<>();
+
+            BranchModel branchModel = dbHandler.branchHandler.getBranchInfoByBranchId(event.getBranch_id());
+            s.add(event.getName());
+            s.add(branchModel.getName());
+            s.add(event.getDate().toString());
+            s.add(event.getTime().toString());
+            s.add(dbHandler.eventHandler.getEmployeeManagingEventString(event.getEventId()));
+
+            eventTableModel.addRow(s.toArray());
         }
 
         registeredBranchesListModel.removeAllElements();
@@ -154,5 +186,10 @@ public class MemberWindow implements DisposableWindow {
     public int getSelectedMemberID() {
         MemberModel selectedMember = (MemberModel) memberComboBox.getSelectedItem();
         return selectedMember.getId();
+    }
+
+    private void removeAllElements(TableModel tableModel) {
+        while (tableModel.getRowCount() != 0)
+            tableModel.removeRow(0);
     }
 }

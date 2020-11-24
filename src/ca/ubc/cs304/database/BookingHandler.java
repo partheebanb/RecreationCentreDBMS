@@ -102,25 +102,30 @@ public class BookingHandler {
         return result;
     }
 
-    public ArrayList<String> getBookingByMemberId(int mid) {
-        ArrayList<String> result = new ArrayList<>();
+    public ArrayList<BookingModel> getBookingByMemberId(int mid) {
+        ArrayList<BookingModel> result = new ArrayList<>();
 
         try {
             Statement stmt = connection.createStatement();
-            PreparedStatement ps = connection.prepareStatement("SELECT * " +
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
                     "FROM MEMBER m, BOOKING b, BRANCH br " +
                     "WHERE m.MEMBER_ID = b.MEMBER_ID " +
-                    "AND br.BRANCH_ID = b.BRANCH_ID " +
-                    "AND b.MEMBER_ID = ?");
+                        "AND br.BRANCH_ID = b.BRANCH_ID " +
+                        "AND b.MEMBER_ID = ?");
 
             ps.setInt(1, mid);
 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                result.add(
-                        rs.getString("branch_name") + "    |" +
-                        rs.getTime("booking_date").toString());
+                BookingModel bookingModel = new BookingModel(rs.getInt("booking_id"),
+                        rs.getDate("booking_date"),
+                        rs.getTime("booking_date"),
+                        rs.getInt("member_id"),
+                        rs.getInt("branch_id"));
+
+                result.add(bookingModel);
             }
 
             rs.close();

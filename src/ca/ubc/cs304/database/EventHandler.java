@@ -50,6 +50,40 @@ public class EventHandler {
         return result;
     }
 
+    public ArrayList<DayEventModel> getEventModelForMember(int memberId) {
+        ArrayList<DayEventModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * " +
+                        "FROM EVENT, ATTEND " +
+                        "WHERE EVENT.EVENT_ID = ATTEND.EVENT_ID " +
+                        "    AND MEMBER_ID = ? ");
+
+            ps.setInt(1, memberId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                DayEventModel model = new DayEventModel(
+                        rs.getInt("event_id"),
+                        rs.getString("name"),
+                        rs.getDate("event_datetime"),
+                        rs.getTime("event_datetime"),
+                        rs.getInt("branch_id"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + "4 " + e.getMessage());
+        }
+
+        return result;
+    }
+
     public String getEmployeeManagingEventString(int eventId) {
         String result = "";
 

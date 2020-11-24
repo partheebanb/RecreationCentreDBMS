@@ -96,11 +96,11 @@ public class AccessHandler {
         try {
             Statement stmt = connection.createStatement();
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT p.BRANCH_NAME, p.AREA_NAME, a.ACCESS_DATE " +
-                            "FROM \"ACCESS\" a, MEMBER m, PUBLIC_AREA p " +
-                            "WHERE a.MEMBER_ID = m.MEMBER_ID " +
-                            "  AND p.AREA_ID = a.AREA_ID " +
-                            "  AND p.BRANCH_ID = ?");
+                    "SELECT b.BRANCH_NAME, p.AREA_NAME, a.ACCESS_DATE " +
+                        "FROM \"ACCESS\" a, PUBLIC_AREA p, BRANCH b " +
+                        "WHERE b.BRANCH_ID = p.BRANCH_ID " +
+                        "  AND p.AREA_ID = a.AREA_ID " +
+                        "  AND a.MEMBER_ID = ?");
 
             ps.setInt(1, branch_id);
 

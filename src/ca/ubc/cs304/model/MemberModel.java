@@ -39,8 +39,16 @@ public class MemberModel {
         return membershipType;
     }
 
-    public char getGender() {
-        return gender;
+    public String getGender() {
+        switch (gender) {
+            case 'F':
+            case 'f':
+                return "Female";
+            case 'M':
+            case 'm':
+                return "Male";
+        }
+        return "Prefer not to say";
     }
 
     public String getFirstName() {
