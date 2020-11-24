@@ -1,7 +1,6 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
-import ca.ubc.cs304.database.EventHandler;
 import ca.ubc.cs304.helper.DateUtils;
 import ca.ubc.cs304.model.*;
 
@@ -29,8 +28,12 @@ public class EventForm implements DisposableWindow {
 
     private DefaultListModel<BookableModel> bookableListModel = new DefaultListModel<>();
     private DefaultListModel<MemberModel> memberListModel = new DefaultListModel<>();
+    private DefaultListModel<EmployeeModel> employeeListModel = new DefaultListModel<>();
 
     private JPanel jpanel;
+    private JList employeeList;
+    private JButton addEmployeeButton;
+    private JComboBox employeeComboBox;
 
     EventForm(DatabaseConnectionHandler dbHandler, int branchId) {
         this.dbHandler = dbHandler;
@@ -50,10 +53,12 @@ public class EventForm implements DisposableWindow {
         setupDateSpinner();
         setupEnterButton();
         setupMemberComboBox();
+        setupEmployeeComboBox();
         setupAddingBookable();
 
         memberList.setModel(memberListModel);
         bookableList.setModel(bookableListModel);
+        employeeList.setModel(employeeListModel);
     }
 
     // When enterForm is pressed, we submit the new booking in the SQL statement
@@ -85,6 +90,13 @@ public class EventForm implements DisposableWindow {
                     dbHandler.eventHandler.insertAttend(attendRelation);
                 }
 
+                for (int i = 0; i < memberListModel.getSize(); i++) {
+                    EmployeeModel employeeModel = employeeListModel.getElementAt(i);
+
+                    HostRelation hostRelation = new HostRelation(employeeModel.getEmployeeId(), eventId);
+                    dbHandler.eventHandler.insertHost(hostRelation);
+                }
+
                 close();
             }
         });
@@ -108,6 +120,21 @@ public class EventForm implements DisposableWindow {
                 if (memberComboBox.getSelectedItem() != null) {
                     memberListModel.addElement((MemberModel) memberComboBox.getSelectedItem());
                     memberComboBox.removeItemAt(memberComboBox.getSelectedIndex());
+                }
+            }
+        });
+    }
+
+    private void setupEmployeeComboBox() {
+        for (EmployeeModel employeeModel : dbHandler.employeeHandler.getEmployeeByBranch(branchId)) {
+            employeeComboBox.addItem(employeeModel);
+        }
+        addEmployeeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (employeeComboBox.getSelectedItem() != null) {
+                    employeeListModel.addElement((EmployeeModel) employeeComboBox.getSelectedItem());
+                    employeeComboBox.removeItemAt(memberComboBox.getSelectedIndex());
                 }
             }
         });

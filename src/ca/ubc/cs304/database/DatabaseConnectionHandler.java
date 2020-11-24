@@ -27,6 +27,7 @@ public class DatabaseConnectionHandler {
 	public ReserveHandler reserveHandler = null;
 	public ProgramHandler programHandler;
 	public EventHandler eventHandler;
+	public EmployeeHandler employeeHandler;
 
 	public DatabaseConnectionHandler() {
 		try {
@@ -69,6 +70,7 @@ public class DatabaseConnectionHandler {
 			reserveHandler = new ReserveHandler(connection);
 			programHandler = new ProgramHandler(connection);
 			eventHandler = new EventHandler(connection);
+			employeeHandler = new EmployeeHandler(connection);
 	
 			System.out.println("\nConnected to Oracle!");
 			return true;

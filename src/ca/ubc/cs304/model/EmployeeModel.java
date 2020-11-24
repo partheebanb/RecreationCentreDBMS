@@ -59,4 +59,9 @@ public class EmployeeModel {
     public int getBranchId() {
         return branchId;
     }
+
+    @Override
+    public String toString() {
+        return getFirstName() + " " + getLastName();
+    }
 }

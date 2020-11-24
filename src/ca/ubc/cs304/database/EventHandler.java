@@ -91,6 +91,24 @@ public class EventHandler {
         }
     }
 
+    public void insertHost(HostRelation hostRelation) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO HOSTS (EVENT_ID, EMPLOYEE_ID) " +
+                            "VALUES (?,?)");
+            ps.setInt(1, hostRelation.getEventId());
+            ps.setInt(2, hostRelation.getEmployeeId());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
     public ArrayList<DayEventModel> getEventModelOnBranch(int branchId) {
         ArrayList<DayEventModel> result = new ArrayList<>();
 
